@@ -8,5 +8,8 @@ public class User {
     public String name;
     public int department_id;
     public int state;
+    public int del;
     public Date systime;
+    //extra
+    public String department_name;
 }

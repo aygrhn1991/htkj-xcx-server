@@ -33,31 +33,29 @@ public class AuthCtrl {
         String result = new RestTemplate().getForObject(url, String.class);
         Map resultMap = new Gson().fromJson(result, Map.class);
         String openid = resultMap.get("openid").toString();
-        String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id where t.del=0 and t.openid=?";
+        String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id where t.openid=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, openid);
-        Map data = new HashMap();
-        data.put("openid", openid);
         if (list.size() == 0) {
-            data.put("state", UserState.unregister.ordinal());
-            return R.success("用户不存在", data);
+            return R.error("用户不存在", openid);
         } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.unauthorized.ordinal()) {
-            data.put("state", UserState.unauthorized.ordinal());
-            return R.success("用户尚未通过认证", data);
+            return R.error("用户信息审核中", UserState.unauthorized.ordinal());
         } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
-            data.put("state", UserState.disabled.ordinal());
-            return R.success("用户账号已被禁用", data);
+            return R.error("用户账号已禁用", UserState.disabled.ordinal());
         } else {
-            data.put("state", UserState.active.ordinal());
-            data.put("data", list.get(0));
-            return R.success("用户存在且账号可用", data);
+            return R.success("用户存在且正常", list.get(0));
         }
     }
 
     @RequestMapping("/register")
     public Result register(@RequestBody User model) {
-        String sql = "insert into t_user(id,openid,name,department_id,state,del,systime) values(?,?,?,?,?,0,now())";
+        String sql = "select * from t_user t where t.id=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.id);
+        if (list.size() > 0) {
+            return R.error("该工号已被注册");
+        }
+        sql = "insert into t_user(id,openid,name,department_id,state,systime) values(?,?,?,?,?,now())";
         int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
-        return R.success("用户认证信息已提交，请等待审核", model);
+        return R.success("用户认证已提交", model);
     }
 
 

@@ -37,10 +37,10 @@ public class ApiCtrl {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.time,'%Y-%m-%d')=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.userid, UtilDate.dateToYYYYMMDD(model.time));
         if (count >= 1) {
-            return R.error("今天已经申报过加班");
+            return R.error("今天已申报加班");
         }
         sql = "insert into t_add_job_record(userid,time,meal,bus,del,systime) values(?,?,?,?,0,now())";
-        count = this.jdbc.update(sql, Integer.class, model.userid, model.time, model.meal, model.bus);
+        count = this.jdbc.update(sql, model.userid, model.time, model.meal, model.bus);
         return R.success("申报加班成功", count);
     }
 }

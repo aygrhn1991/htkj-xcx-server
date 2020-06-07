@@ -49,27 +49,4 @@ public class ApiCtrl {
         List<Map<String, Object>> recordList = this.jdbc.queryForList(sql, userid);
         return R.success("加班申报记录", recordList);
     }
-//    @RequestMapping("/addJobRecord/{userid}")
-//    public Result addJobRecord(@PathVariable String userid) {
-//        String sql = "select *,date_format(t.time,'%Y-%m-%d') as _time from t_add_job_record t where t.del=0 and t.userid=? order by t.time desc";
-//        List<Map<String, Object>> recordList = this.jdbc.queryForList(sql, userid);
-//        Set<String> set = new HashSet<String>();
-//        for (Map map : recordList) {
-//            set.add(map.get("_time").toString().substring(0, 7));
-//        }
-//        List<Map> result = new ArrayList<>();
-//        for (String date : new ArrayList<>(set)) {
-//            Map month = new HashMap();
-//            month.put("date", date);
-//            List<Map> monthRecord = new ArrayList<>();
-//            for (Map map : recordList) {
-//                if (map.get("_time").toString().startsWith(date)) {
-//                    monthRecord.add(map);
-//                }
-//            }
-//            month.put("data", monthRecord);
-//            result.add(month);
-//        }
-//        return R.success("加班申报记录", result);
-//    }
 }

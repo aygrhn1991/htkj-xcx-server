@@ -6,7 +6,6 @@ public class R {
         Result result = new Result();
         result.success = true;
         result.message = message;
-        result.data = null;
         return result;
     }
 
@@ -18,11 +17,19 @@ public class R {
         return result;
     }
 
+    public static Result success(String message, int count, Object data) {
+        Result result = new Result();
+        result.success = true;
+        result.message = message;
+        result.count = count;
+        result.data = data;
+        return result;
+    }
+
     public static Result error(String message) {
         Result result = new Result();
         result.success = false;
         result.message = message;
-        result.data = null;
         return result;
     }
 

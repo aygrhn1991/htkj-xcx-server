@@ -1,0 +1,48 @@
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">范围</label>
+            <div class="layui-input-inline">
+                <input id="date" type="text" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn" ng-click="get()">搜索</button>
+            <button class="layui-btn" ng-click="reset()">重置</button>
+        </div>
+    </div>
+</form>
+<table class="layui-table">
+    <colgroup>
+        <col>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+    <tr>
+        <th>申请ID</th>
+        <th>申请人</th>
+        <th>申请人部门</th>
+        <th>加班时间</th>
+        <th>用餐</th>
+        <th>乘车</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="d in data">
+        <td ng-bind="d.id"></td>
+        <td ng-bind="d.user_name"></td>
+        <td ng-bind="d.department_name"></td>
+        <td ng-bind="d.time|date:'yyyy-MM-dd'"></td>
+        <td>
+            <span ng-if="d.meal==0">不用餐</span>
+            <span ng-if="d.meal==1">用餐</span>
+        </td>
+        <td>
+            <span ng-if="d.bus==0">不乘车</span>
+            <span ng-if="d.bus==1">乘车</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div id="page"></div>

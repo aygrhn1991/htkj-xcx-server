@@ -22,6 +22,19 @@ public class AdminCtrl {
     @Autowired
     private JdbcTemplate jdbc;
 
+    @RequestMapping("/login")
+    public String login() {
+        return "admin/login";
+    }
+
+    @RequestMapping("/dologin")
+    @ResponseBody
+    public Map dologin(@RequestBody Search model) {
+        Map m = new HashMap();
+        m.put("data", model.string1);
+        return m;
+    }
+
     @RequestMapping("/index")
     public String index() {
         return "admin/index";

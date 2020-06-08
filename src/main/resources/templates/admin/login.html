@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <script type="text/javascript" src="/plugin/jquery/jquery.js"></script>
+</head>
+<body>
+<input id="acc">
+<button id="btn">login</button>
+<script>
+    $(function () {
+        var d={string1:'abc'};
+        $('#btn').click(function () {
+            $.ajax({
+                url: '/admin/dologin',
+                method: 'post',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(d),
+                success: function (data) {
+                    console.log(data);
+                }
+            })
+        });
+
+    });
+</script>
+</body>
+</html>

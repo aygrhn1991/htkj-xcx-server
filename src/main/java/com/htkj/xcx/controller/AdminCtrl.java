@@ -57,7 +57,7 @@ public class AdminCtrl {
         String sql2 = "select count(*) from t_user";
         List<Map<String, Object>> userList = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
-        return R.success("用户列表", count, userList);
+        return R.success("员工列表", count, userList);
     }
 
     @RequestMapping("/deleteUser/{userid}")
@@ -65,7 +65,7 @@ public class AdminCtrl {
     public Result deleteUser(@PathVariable int userid) {
         String sql = "delete from t_user where id=?";
         int count = this.jdbc.update(sql, userid);
-        return R.success("用户申请已拒绝");
+        return R.success("员工申请已拒绝");
     }
 
     @RequestMapping("/updateUserState/{userid}/{state}")
@@ -73,14 +73,14 @@ public class AdminCtrl {
     public Result updateUserState(@PathVariable int userid, @PathVariable int state) {
         String sql = "update t_user t set t.state=? where t.id=?";
         int count = this.jdbc.update(sql, state, userid);
-        return R.success("用户状态更新成功");
+        return R.success("员工状态更新成功");
     }
 
     @RequestMapping("/getAddJobRecordList")
     @ResponseBody
     public Result getAddJobRecordList(@RequestBody Search model) {
-        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.time,'%Y-%m-%d')=? order by t.systime desc limit " + UtilPage.getPage(model);
-        String sql2 = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.time,'%Y-%m-%d')=?";
+        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime desc limit " + UtilPage.getPage(model);
+        String sql2 = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
         List<Map<String, Object>> recordList = this.jdbc.queryForList(sql1, model.string1);
         int count = this.jdbc.queryForObject(sql2, Integer.class, model.string1);
         return R.success("加班申报记录", count, recordList);

@@ -36,13 +36,13 @@ public class AuthCtrl {
         String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id where t.openid=?";
         List<Map<String, Object>> userList = this.jdbc.queryForList(sql, openid);
         if (userList.size() == 0) {
-            return R.error("用户不存在", openid);
+            return R.error("员工不存在", openid);
         } else if (Integer.parseInt(userList.get(0).get("state").toString()) == UserState.unauthorized.ordinal()) {
-            return R.error("用户信息审核中", UserState.unauthorized.ordinal());
+            return R.error("员工信息审核中", UserState.unauthorized.ordinal());
         } else if (Integer.parseInt(userList.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
-            return R.error("用户账号已禁用", UserState.disabled.ordinal());
+            return R.error("员工账号已禁用", UserState.disabled.ordinal());
         } else {
-            return R.success("用户存在且正常", userList.get(0));
+            return R.success("员工存在且正常", userList.get(0));
         }
     }
 
@@ -56,7 +56,7 @@ public class AuthCtrl {
         sql = "insert into t_user(id,openid,name,department_id,state,systime) values(?,?,?,?,?,now())";
 //        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
         int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.active.ordinal());
-        return R.success("用户认证已提交", model);
+        return R.success("员工认证已提交", model);
     }
 
 

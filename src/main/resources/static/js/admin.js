@@ -65,7 +65,7 @@ app.controller('userCtrl', function ($scope, $http) {
         });
     };
     $scope.delete = function (e) {
-        layer.confirm('此操作将拒绝用户认证', null, function () {
+        layer.confirm('此操作将拒绝员工认证', null, function () {
             $http.post('/admin/deleteUser/' + e.id).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
@@ -75,7 +75,7 @@ app.controller('userCtrl', function ($scope, $http) {
         });
     };
     $scope.editState = function (e, state) {
-        layer.confirm('此操作将更改用户账号状态', null, function () {
+        layer.confirm('此操作将更改员工账号状态', null, function () {
             $http.post('/admin/updateUserState/' + e.id + '/' + state).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {

@@ -33,14 +33,14 @@
         <td ng-bind="d.id"></td>
         <td ng-bind="d.user_name"></td>
         <td ng-bind="d.department_name"></td>
-        <td ng-bind="d.time|date:'yyyy-MM-dd'"></td>
+        <td ng-bind="d.date"></td>
         <td>
             <span ng-if="d.meal==0">不用餐</span>
-            <span ng-if="d.meal==1">用餐</span>
+            <span ng-if="d.meal==1">用餐(<span ng-bind="d.meal_time==1?'午餐':d.meal_time==2?'晚餐':'午餐+晚餐'"></span>)</span>
         </td>
         <td>
             <span ng-if="d.bus==0">不乘车</span>
-            <span ng-if="d.bus==1">乘车</span>
+            <span ng-if="d.bus==1">乘车(<span ng-bind="d.bus_time==1?'16:30':'17:30'"></span>)</span>
         </td>
     </tr>
     </tbody>

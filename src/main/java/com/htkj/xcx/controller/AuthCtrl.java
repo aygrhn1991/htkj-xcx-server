@@ -54,7 +54,8 @@ public class AuthCtrl {
             return R.error("该工号已被注册");
         }
         sql = "insert into t_user(id,openid,name,department_id,state,systime) values(?,?,?,?,?,now())";
-        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
+//        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
+        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.active.ordinal());
         return R.success("用户认证已提交", model);
     }
 

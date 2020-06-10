@@ -10,7 +10,7 @@ app.config(function ($routeProvider) {
             controller: 'addJobRecordCtrl'
         })
         .otherwise({
-            redirectTo: '/user'
+            redirectTo: '/addjobrecord'
         });
 });
 app.run(function ($rootScope, $location, $timeout) {

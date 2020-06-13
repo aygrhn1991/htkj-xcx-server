@@ -120,7 +120,7 @@ app.controller('userCtrl', function ($scope, $http) {
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.loading = layer.load();
-        $http.post('/admin/getAddJobRecordList', $scope.search).success(function (data) {
+        $http.post('/admin/get_add_job_record', $scope.search).success(function (data) {
             layer.close($scope.loading);
             if (data.success) {
                 $scope.data = data.data;
@@ -157,15 +157,25 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.reset = function () {
         $scope.loading = null;
         $scope.search = window.Util.getSearchObject();
+        $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
         $scope.model = window.Util.copyObject($scope.m);
-        layui.laydate.render({
-            elem: '#date',
-            value: $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date()),
-            done: function (value, date, endDate) {
-                console.log(value);
-                $scope.search.string1 = value;
-            }
-        });
+        $http.post('/admin/get_add_job_record_all_date').success(function (data) {
+            var dateList = {};
+            data.data.forEach(function (e) {
+                dateList[e.date] = '';
+            })
+            console.log(dateList);
+            layui.laydate.render({
+                elem: '#date',
+                value: $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date()),
+                mark: dateList,
+                done: function (value, date, endDate) {
+                    console.log(value);
+                    $scope.search.string1 = value;
+                }
+            });
+        })
+
         $scope.get();
     };
     $scope.reset();

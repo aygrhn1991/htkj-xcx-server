@@ -53,11 +53,11 @@ public class AdminCtrl {
     @RequestMapping("/getUserList")
     @ResponseBody
     public Result getUserList(@RequestBody Search model) {
-        String sql1 = "select *,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.state,t.name limit " + UtilPage.getPage(model);
+        String sql1 = "select *,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.state,t.id limit " + UtilPage.getPage(model);
         String sql2 = "select count(*) from t_user";
-        List<Map<String, Object>> userList = this.jdbc.queryForList(sql1);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
-        return R.success("员工列表", count, userList);
+        return R.success("员工列表", count, list);
     }
 
     @RequestMapping("/deleteUser/{userid}")
@@ -76,13 +76,31 @@ public class AdminCtrl {
         return R.success("员工状态更新成功");
     }
 
-    @RequestMapping("/getAddJobRecordList")
+    //region
+    @RequestMapping("/get_add_job_record")
     @ResponseBody
-    public Result getAddJobRecordList(@RequestBody Search model) {
+    public Result get_add_job_record(@RequestBody Search model) {
         String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime desc limit " + UtilPage.getPage(model);
         String sql2 = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
-        List<Map<String, Object>> recordList = this.jdbc.queryForList(sql1, model.string1);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, model.string1);
         int count = this.jdbc.queryForObject(sql2, Integer.class, model.string1);
-        return R.success("加班申报记录", count, recordList);
+        return R.success("加班申报记录(分页)", count, list);
     }
+
+    @RequestMapping("/get_add_job_record_all_date")
+    @ResponseBody
+    public Result get_add_job_record_all_date() {
+        String sql = "select t.date from t_add_job_record t group by t.date";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
+        return R.success("所有有加班记录的日期", list);
+    }
+
+    @RequestMapping("/get_add_job_record_one_day")
+    @ResponseBody
+    public Result get_add_job_record_one_day(@RequestBody Search model) {
+        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime desc";
+        List<Map<String, Object>> recordList = this.jdbc.queryForList(sql1, model.string1);
+        return R.success("一天所有加班申报记录", recordList);
+    }
+    //endregion
 }

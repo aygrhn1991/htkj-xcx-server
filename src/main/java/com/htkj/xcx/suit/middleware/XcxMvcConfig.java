@@ -12,13 +12,13 @@ public class XcxMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new XcxInterceptor()).addPathPatterns("/**")
                 .excludePathPatterns("/api/**", "/auth/**", "/error/**")
-                .excludePathPatterns("/admin/login", "/admin/dologin")
+                .excludePathPatterns("/admin/login", "/admin/doLogin")
                 .excludePathPatterns("/css/**", "/js/**", "/img/**", "/plugin/**", "/favicon.ico");
     }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("admin/index");
+        registry.addViewController("/").setViewName("admin/login");
     }
 
 }

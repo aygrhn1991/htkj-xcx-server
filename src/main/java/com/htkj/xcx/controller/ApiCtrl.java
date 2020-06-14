@@ -26,6 +26,7 @@ public class ApiCtrl {
         return R.success("ok", message);
     }
 
+    //region 加班
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
@@ -44,4 +45,5 @@ public class ApiCtrl {
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         return R.success("加班申报记录", list);
     }
+    //endregion
 }

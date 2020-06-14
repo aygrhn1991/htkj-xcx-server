@@ -1,5 +1,6 @@
 package com.htkj.xcx.controller;
 
+import com.htkj.xcx.model.Admin;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
@@ -11,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,23 +25,31 @@ public class AdminCtrl {
     @Autowired
     private JdbcTemplate jdbc;
 
+    @RequestMapping("/test/{message}")
+    public Result test(@PathVariable String message) {
+        return R.success("ok", message);
+    }
+
+    //region 登录
     @RequestMapping("/login")
     public String login() {
         return "admin/login";
     }
 
-    @RequestMapping("/dologin")
+    @RequestMapping("/doLogin")
     @ResponseBody
-    public Map dologin(@RequestBody Search model) {
-        Map m = new HashMap();
-        m.put("data", model.string1);
-        return m;
+    public Result doLogin(@RequestBody Admin model) {
+        String sql1 = "select * from t_admin t where t.account=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, model.account);
+        if (list.size() == 0) {
+            return R.error("账号不存在或未授权");
+        }
+        if (!list.get(0).get("password").toString().equals(model.password)) {
+            return R.error("密码错误");
+        }
+        return R.success("登录成功", list.get(0));
     }
-
-    @RequestMapping("/test/{message}")
-    public Result test(@PathVariable String message) {
-        return R.success("ok", message);
-    }
+    //endregion
 
     @RequestMapping("/index")
     public String index() {
@@ -88,7 +96,7 @@ public class AdminCtrl {
     @RequestMapping("/getAddJobRecord")
     @ResponseBody
     public Result getAddJobRecord(@RequestBody Search model) {
-        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime desc limit " + UtilPage.getPage(model);
+        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
         String sql2 = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1, model.string1);
         int count = this.jdbc.queryForObject(sql2, Integer.class, model.string1);
@@ -106,9 +114,9 @@ public class AdminCtrl {
     @RequestMapping("/getAddJobRecordOneDay/{date}")
     @ResponseBody
     public Result getAddJobRecordOneDay(@PathVariable String date) {
-        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime desc";
-        List<Map<String, Object>> recordList = this.jdbc.queryForList(sql1, date);
-        return R.success("一天所有加班申报记录", recordList);
+        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, date);
+        return R.success("一天所有加班申报记录", list);
     }
     //endregion
 }

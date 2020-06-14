@@ -53,6 +53,29 @@ app.run(function ($rootScope, $location, $timeout) {
         e.select = true;
     };
 });
+app.controller('loginCtrl', function ($scope, $http) {
+    $scope.login = function () {
+        $http.post('/admin/doLogin', $scope.model).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                window.Util.setCookie('admin', JSON.stringify(data.data));
+                window.location.href = '/admin/index';
+            }
+        });
+    };
+    $scope.pageModel = {
+        id: null,
+        account: null,
+        password: null,
+        state: null,
+        systime: null
+    };
+    $scope.reset = function () {
+        $scope.loading = null;
+        $scope.model = window.Util.copyObject($scope.pageModel);
+    };
+    $scope.reset();
+});
 app.controller('userCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.loading = layer.load();

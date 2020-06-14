@@ -35,18 +35,18 @@ public class AuthCtrl {
     public Result login(@PathVariable String code) {
         String url = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", this.appid, this.appsecret, code);
         String result = new RestTemplate().getForObject(url, String.class);
-        Map resultMap = new Gson().fromJson(result, Map.class);
-        String openid = resultMap.get("openid").toString();
+        Map map = new Gson().fromJson(result, Map.class);
+        String openid = map.get("openid").toString();
         String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id where t.openid=?";
-        List<Map<String, Object>> userList = this.jdbc.queryForList(sql, openid);
-        if (userList.size() == 0) {
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, openid);
+        if (list.size() == 0) {
             return R.error("员工不存在", openid);
-        } else if (Integer.parseInt(userList.get(0).get("state").toString()) == UserState.unauthorized.ordinal()) {
+        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.unauthorized.ordinal()) {
             return R.error("员工信息审核中", UserState.unauthorized.ordinal());
-        } else if (Integer.parseInt(userList.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
+        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
             return R.error("员工账号已禁用", UserState.disabled.ordinal());
         } else {
-            return R.success("员工存在且正常", userList.get(0));
+            return R.success("员工存在且正常", list.get(0));
         }
     }
 
@@ -60,7 +60,7 @@ public class AuthCtrl {
         sql = "insert into t_user(id,openid,name,department_id,state,systime) values(?,?,?,?,?,now())";
 //        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
         int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.active.ordinal());
-        return R.success("员工认证已提交", model);
+        return R.success("员工认证已提交");
     }
 
 

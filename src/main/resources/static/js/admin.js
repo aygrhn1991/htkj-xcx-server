@@ -14,34 +14,29 @@ app.config(function ($routeProvider) {
         });
 });
 app.run(function ($rootScope, $http, $location, $timeout) {
-    $rootScope.getAdmin = function (fromLogin) {
+    $rootScope.getAdmin = function () {
         $http.post('/admin/getAdmin').success(function (data) {
             $rootScope.admin = data.data.admin;
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
-            if (fromLogin) {
-                window.location.href = '/admin/index';
-            }
+            $rootScope.menu = [{
+                id: 1,
+                name: '员工管理',
+                select: false,
+                pages: [{id: 1, name: '员工信息审核', select: false, path: '#/user'}]
+            }, {
+                id: 2,
+                name: '加班申报',
+                select: false,
+                pages: [{id: 3, name: '加班申报', select: false, path: '#/addjobrecord'}]
+            }];
+            $rootScope.matchMenu();
         });
     };
-    $rootScope.menu = [{
-        id: 1,
-        name: '员工管理',
-        select: false,
-        pages: [{id: 1, name: '员工信息审核', select: false, path: '#/user'}]
-    }, {
-        id: 2,
-        name: '加班申报',
-        select: false,
-        pages: [{id: 3, name: '加班申报', select: false, path: '#/addjobrecord'}]
-    }];
-    layui.use('element', function () {
-        var element = layui.element;
-    });
-    $rootScope.$on('$routeChangeSuccess', function (evt, current, previous) {
-        if ($rootScope.menu != null) {
-            $rootScope.matchMenu();
-        }
-    });
+    if (!window.Util.isNull(window.Util.getCookie('admin'))) {
+        $rootScope.getAdmin();
+    } else {
+        window.location.href = '/admin/index';
+    }
     $rootScope.matchMenu = function () {
         $rootScope.menu.forEach(function (e) {
             e.select = false;
@@ -54,36 +49,24 @@ app.run(function ($rootScope, $http, $location, $timeout) {
             });
         });
     };
-    $rootScope.matchMenu();
     $rootScope.menuClick = function (e) {
         $rootScope.menu.forEach(function (f) {
             f.select = false;
         });
         e.select = true;
     };
-});
-app.controller('loginCtrl', function ($scope, $http, $rootScope) {
-    $scope.login = function () {
-        $http.post('/admin/doLogin', $scope.model).success(function (data) {
-            layer.msg(data.message);
-            if (data.success) {
-                window.Util.setCookie('admin', JSON.stringify(data.data));
-                $rootScope.getAdmin(true);
-            }
-        });
+    $rootScope.logout = function () {
+        window.Util.removeCookie('admin');
+        window.location.href = '/admin/login';
     };
-    $scope.pageModel = {
-        id: null,
-        account: null,
-        password: null,
-        state: null,
-        systime: null
-    };
-    $scope.reset = function () {
-        $scope.loading = null;
-        $scope.model = window.Util.copyObject($scope.pageModel);
-    };
-    $scope.reset();
+    $rootScope.$on('$routeChangeSuccess', function (evt, current, previous) {
+        if ($rootScope.menu != null) {
+            $rootScope.matchMenu();
+        }
+    });
+    layui.use('element', function () {
+        var element = layui.element;
+    });
 });
 app.controller('userCtrl', function ($scope, $http) {
     $scope.get = function () {
@@ -199,20 +182,8 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             }
         });
     };
-    $scope.pageModel = {
-        id: null,
-        userid: null,
-        time: null,
-        meal: null,
-        meal_time: null,
-        bus: null,
-        bus_time: null,
-        del: null,
-        systime: null
-    };
     $scope.reset = function () {
         $scope.loading = null;
-        $scope.model = window.Util.copyObject($scope.pageModel);
         $scope.search = window.Util.getSearchObject();
         $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
         $http.post('/admin/getAddJobRecordAllDate').success(function (data) {

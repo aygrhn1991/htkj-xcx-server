@@ -63,10 +63,34 @@
     </div>
     <script type="text/javascript" src="/plugin/jquery/jquery.js"></script>
     <script type="text/javascript" src="/plugin/angularjs/angular.js"></script>
-    <script type="text/javascript" src="/plugin/angularjs/angular-route.js"></script>
     <script type="text/javascript" src="/plugin/layui/layui.all.js"></script>
     <script type="text/javascript" src="/plugin/util/util.js"></script>
-    <script type="text/javascript" src="/js/admin.js"></script>
+    <script>
+        var app = angular.module('app', []);
+        app.controller('loginCtrl', function ($scope, $http) {
+            $scope.login = function () {
+                $http.post('/admin/doLogin', $scope.model).success(function (data) {
+                    layer.msg(data.message);
+                    if (data.success) {
+                        window.Util.setCookie('admin', JSON.stringify(data.data));
+                        window.location.href = '/admin/index';
+                    }
+                });
+            };
+            $scope.pageModel = {
+                id: null,
+                account: null,
+                password: null,
+                state: null,
+                systime: null
+            };
+            $scope.reset = function () {
+                $scope.loading = null;
+                $scope.model = window.Util.copyObject($scope.pageModel);
+            };
+            $scope.reset();
+        });
+    </script>
 </div>
 </body>
 </html>

@@ -146,16 +146,19 @@ window.Util = {
 
     //#region web
     setCookie: function (name, value) {
-        document.cookie = name + '=' + escape(value) + ';path=/';
+        document.cookie = name + '=' + encodeURIComponent(value) + ';path=/';
     },
     getCookie: function (name) {
         var reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
         var arr = document.cookie.match(reg);
         if (arr) {
-            return unescape(arr[2]);
+            return decodeURIComponent(arr[2]);
         } else {
             return null;
         }
+    },
+    removeCookie: function (name) {
+        document.cookie = name + '=' + encodeURIComponent('') + ';path=/;expires=' + new Date().toGMTString();
     },
     isInnerIp: function (url) {
         var reg1 = /(http|ftp|https|www):\/\//g;

@@ -1,7 +1,14 @@
+<style>
+    .statistic > span > span {
+        font-weight: bold;
+        margin: 0 5px;
+        color: red;
+    }
+</style>
 <form class="layui-form">
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">范围</label>
+            <label class="layui-form-label">日期</label>
             <div class="layui-input-inline">
                 <input id="date" type="text" class="layui-input">
             </div>
@@ -12,20 +19,25 @@
         </div>
     </div>
 </form>
+<div class="statistic">
+    <strong>统计：</strong>
+    <span>加班<span ng-bind="statistic.userCount"></span>人，</span>
+    <span>午餐<span ng-bind="statistic.meal1Count"></span>人，</span>
+    <span>晚餐<span ng-bind="statistic.meal2Count"></span>人，</span>
+    <span>乘车(16:30)<span ng-bind="statistic.bus1Count"></span>人，</span>
+    <span>乘车(19:30)<span ng-bind="statistic.bus2Count"></span>人</span>
+</div>
+<hr>
 <table class="layui-table">
-    <colgroup>
-        <col>
-        <col>
-        <col>
-    </colgroup>
     <thead>
     <tr>
-        <th>申请ID</th>
+        <th>ID</th>
         <th>申请人</th>
         <th>申请人部门</th>
         <th>加班时间</th>
         <th>用餐</th>
         <th>乘车</th>
+        <th>申报时间</th>
     </tr>
     </thead>
     <tbody>
@@ -36,14 +48,14 @@
         <td ng-bind="d.date"></td>
         <td>
             <span ng-if="d.meal==0">不用餐</span>
-            <span ng-if="d.meal==1">用餐(<span ng-bind="d.meal_time==1?'午餐':d.meal_time==2?'晚餐':'午餐+晚餐'"></span>)</span>
+            <span ng-if="d.meal==1">用餐(<span ng-bind="d.meal_time==1?'午餐':d.meal_time==2?'晚餐':'午餐,晚餐'"></span>)</span>
         </td>
         <td>
             <span ng-if="d.bus==0">不乘车</span>
             <span ng-if="d.bus==1">乘车(<span ng-bind="d.bus_time==1?'16:30':'19:30'"></span>)</span>
         </td>
+        <td ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></td>
     </tr>
     </tbody>
 </table>
 <div id="page"></div>
-<input id="test" />

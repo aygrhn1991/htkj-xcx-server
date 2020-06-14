@@ -120,12 +120,34 @@ app.controller('userCtrl', function ($scope, $http) {
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.loading = layer.load();
-        $http.post('/admin/get_add_job_record', $scope.search).success(function (data) {
+        $http.post('/admin/getAddJobRecord', $scope.search).success(function (data) {
             layer.close($scope.loading);
-            if (data.success) {
-                $scope.data = data.data;
-                $scope.makePage(data);
-            }
+            $scope.data = data.data;
+            $scope.makePage(data);
+        });
+        $http.post('/admin/getAddJobRecordOneDay/' + $scope.search.string1).success(function (data) {
+            $scope.statistic = {
+                userCount: 0,
+                meal1Count: 0,
+                meal2Count: 0,
+                bus1Count: 0,
+                bus2Count: 0,
+            };
+            data.data.forEach(function (x) {
+                $scope.statistic.userCount++;
+                if (x.meal_time == 1 || x.meal_time == 3) {
+                    $scope.statistic.meal1Count++;
+                }
+                if (x.meal_time == 2 || x.meal_time == 3) {
+                    $scope.statistic.meal2Count++;
+                }
+                if (x.bus_time == 1) {
+                    $scope.statistic.bus1Count++;
+                }
+                if (x.bus_time == 2) {
+                    $scope.statistic.bus2Count++;
+                }
+            })
         });
     };
     $scope.makePage = function (data) {
@@ -145,37 +167,36 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             }
         });
     };
-    $scope.m = {
+    $scope.pageModel = {
         id: null,
         userid: null,
         time: null,
         meal: null,
+        meal_time: null,
         bus: null,
+        bus_time: null,
         del: null,
         systime: null
     };
     $scope.reset = function () {
         $scope.loading = null;
+        $scope.model = window.Util.copyObject($scope.pageModel);
         $scope.search = window.Util.getSearchObject();
         $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
-        $scope.model = window.Util.copyObject($scope.m);
-        $http.post('/admin/get_add_job_record_all_date').success(function (data) {
+        $http.post('/admin/getAddJobRecordAllDate').success(function (data) {
             var dateList = {};
-            data.data.forEach(function (e) {
-                dateList[e.date] = '';
+            data.data.forEach(function (x) {
+                dateList[x.date] = '';
             })
-            console.log(dateList);
             layui.laydate.render({
                 elem: '#date',
                 value: $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date()),
                 mark: dateList,
                 done: function (value, date, endDate) {
-                    console.log(value);
                     $scope.search.string1 = value;
                 }
             });
         })
-
         $scope.get();
     };
     $scope.reset();

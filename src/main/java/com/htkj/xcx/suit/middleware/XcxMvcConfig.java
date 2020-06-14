@@ -11,8 +11,9 @@ public class XcxMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new XcxInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/api/**", "/auth/**", "/error/**")
                 .excludePathPatterns("/admin/login", "/admin/dologin")
-                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/plugin/**","/favicon.ico");
+                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/plugin/**", "/favicon.ico");
     }
 
     @Override

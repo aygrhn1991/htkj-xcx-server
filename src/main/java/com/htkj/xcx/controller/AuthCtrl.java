@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.htkj.xcx.model.*;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +20,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthCtrl {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${wx.appid}")
     private String appid;

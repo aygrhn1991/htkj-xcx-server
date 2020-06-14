@@ -1,9 +1,10 @@
 package com.htkj.xcx.controller;
 
 import com.htkj.xcx.model.AddJobRecord;
-import com.htkj.xcx.suit.response.R;
-import com.htkj.xcx.suit.response.Result;
+import com.htkj.xcx.suit.response.*;
 import com.htkj.xcx.suit.util.UtilDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +16,14 @@ import java.util.*;
 @RequestMapping("/api")
 public class ApiCtrl {
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private JdbcTemplate jdbc;
 
     @RequestMapping("/test/{message}")
     public Result test(@PathVariable String message) {
         return R.success("ok", message);
-    }
-
-    @RequestMapping("/getDepartment")
-    @ResponseBody
-    public Result getDepartment() {
-        String sql = String.format("select * from t_department");
-        List<Map<String, Object>> departmentList = this.jdbc.queryForList(sql);
-        return R.success("部门列表", departmentList);
     }
 
     @RequestMapping("/addJob")
@@ -43,10 +38,10 @@ public class ApiCtrl {
         return R.success("申报加班成功", count);
     }
 
-    @RequestMapping("/addJobRecord/{userid}")
-    public Result addJobRecord(@PathVariable String userid) {
+    @RequestMapping("/getAddJobRecordOfUser/{userid}")
+    public Result getAddJobRecordOfUser(@PathVariable String userid) {
         String sql = "select * from t_add_job_record t where t.del=0 and t.userid=? order by t.date desc";
-        List<Map<String, Object>> recordList = this.jdbc.queryForList(sql, userid);
-        return R.success("加班申报记录", recordList);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
+        return R.success("加班申报记录", list);
     }
 }

@@ -30,7 +30,7 @@ public class ApiCtrl {
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
-        int count = this.jdbc.queryForObject(sql, Integer.class, model.userid, UtilDate.dateToYYYYMMDD(model.date));
+        int count = this.jdbc.queryForObject(sql, Integer.class, model.userid, model.date);
         if (count >= 1) {
             return R.error("当天已申报加班");
         }

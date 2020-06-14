@@ -1,5 +1,6 @@
 package com.htkj.xcx.controller;
 
+import com.google.gson.Gson;
 import com.htkj.xcx.model.Admin;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
@@ -11,7 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +33,18 @@ public class AdminCtrl {
 
     @Autowired
     private JdbcTemplate jdbc;
+
+    private Admin getAdminFromCookie() throws UnsupportedEncodingException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String adminJson = null;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("admin")) {
+                adminJson = URLDecoder.decode(cookie.getValue(), "UTF-8");
+            }
+        }
+        return new Gson().fromJson(adminJson, Admin.class);
+    }
 
     @RequestMapping("/test/{message}")
     public Result test(@PathVariable String message) {
@@ -39,8 +60,8 @@ public class AdminCtrl {
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result doLogin(@RequestBody Admin model) {
-        String sql1 = "select * from t_admin t where t.account=?";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, model.account);
+        String sql = "select * from t_admin t where t.account=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.account);
         if (list.size() == 0) {
             return R.error("账号不存在或未授权");
         }
@@ -48,6 +69,16 @@ public class AdminCtrl {
             return R.error("密码错误");
         }
         return R.success("登录成功", list.get(0));
+    }
+
+    @RequestMapping("/getAdmin")
+    @ResponseBody
+    public Result getAdmin() throws UnsupportedEncodingException {
+        String sql = "select t.*,t1.name user_name,t2.name department_name from t_admin t left join t_user t1 on t.account=t1.id left join t_department t2 on t1.department_id=t2.id where t.account=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, this.getAdminFromCookie().account);
+        Map map = new HashMap();
+        map.put("admin", list.get(0));
+        return R.success("管理员信息与授权页面", map);
     }
     //endregion
 
@@ -69,10 +100,10 @@ public class AdminCtrl {
     @RequestMapping("/getUserList")
     @ResponseBody
     public Result getUserList(@RequestBody Search model) {
-        String sql1 = "select *,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.state,t.id limit " + UtilPage.getPage(model);
-        String sql2 = "select count(*) from t_user";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
-        int count = this.jdbc.queryForObject(sql2, Integer.class);
+        String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.state,t.id limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
+        sql = "select count(*) from t_user";
+        int count = this.jdbc.queryForObject(sql, Integer.class);
         return R.success("员工列表", count, list);
     }
 
@@ -96,10 +127,10 @@ public class AdminCtrl {
     @RequestMapping("/getAddJobRecord")
     @ResponseBody
     public Result getAddJobRecord(@RequestBody Search model) {
-        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
-        String sql2 = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, model.string1);
-        int count = this.jdbc.queryForObject(sql2, Integer.class, model.string1);
+        String sql = "select t.*,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.string1);
+        sql = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        int count = this.jdbc.queryForObject(sql, Integer.class, model.string1);
         return R.success("加班申报记录(分页)", count, list);
     }
 
@@ -114,8 +145,8 @@ public class AdminCtrl {
     @RequestMapping("/getAddJobRecordOneDay/{date}")
     @ResponseBody
     public Result getAddJobRecordOneDay(@PathVariable String date) {
-        String sql1 = "select *,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, date);
+        String sql = "select * from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
         return R.success("一天所有加班申报记录", list);
     }
     //endregion

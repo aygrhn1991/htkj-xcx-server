@@ -13,7 +13,16 @@ app.config(function ($routeProvider) {
             redirectTo: '/addjobrecord'
         });
 });
-app.run(function ($rootScope, $location, $timeout) {
+app.run(function ($rootScope, $http, $location, $timeout) {
+    $rootScope.getAdmin = function (fromLogin) {
+        $http.post('/admin/getAdmin').success(function (data) {
+            $rootScope.admin = data.data.admin;
+            window.Util.setCookie('admin', JSON.stringify(data.data.admin));
+            if (fromLogin) {
+                window.location.href = '/admin/index';
+            }
+        });
+    };
     $rootScope.menu = [{
         id: 1,
         name: '员工管理',
@@ -53,13 +62,13 @@ app.run(function ($rootScope, $location, $timeout) {
         e.select = true;
     };
 });
-app.controller('loginCtrl', function ($scope, $http) {
+app.controller('loginCtrl', function ($scope, $http, $rootScope) {
     $scope.login = function () {
         $http.post('/admin/doLogin', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 window.Util.setCookie('admin', JSON.stringify(data.data));
-                window.location.href = '/admin/index';
+                $rootScope.getAdmin(true);
             }
         });
     };

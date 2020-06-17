@@ -17,7 +17,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -36,14 +35,14 @@ public class AdminCtrl {
 
     private Admin getAdminFromCookie() throws UnsupportedEncodingException {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String adminJson = null;
+        String json = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("admin")) {
-                adminJson = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                json = URLDecoder.decode(cookie.getValue(), "UTF-8");
             }
         }
-        return new Gson().fromJson(adminJson, Admin.class);
+        return new Gson().fromJson(json, Admin.class);
     }
 
     @RequestMapping("/test/{message}")

@@ -6,7 +6,4 @@ public class Admin {
     public String password;
     public int state;
     public String systime;
-    //
-    public String user_name;
-    public String department_name;
 }

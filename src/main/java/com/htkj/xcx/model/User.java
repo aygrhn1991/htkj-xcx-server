@@ -7,6 +7,4 @@ public class User {
     public int department_id;
     public int state;
     public String systime;
-    //extra
-    public String department_name;
 }

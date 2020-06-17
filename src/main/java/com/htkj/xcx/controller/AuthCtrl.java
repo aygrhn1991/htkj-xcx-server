@@ -50,6 +50,13 @@ public class AuthCtrl {
         }
     }
 
+    @RequestMapping("/getUserPage/{userid}")
+    public Result getUserPage(@PathVariable String userid) {
+        String sql = "select * from t_user_page t where t.userid=%s";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
+        return R.success("员工授权页面", list);
+    }
+
     @RequestMapping("/register")
     public Result register(@RequestBody User model) {
         String sql = "select * from t_user t where t.id=?";

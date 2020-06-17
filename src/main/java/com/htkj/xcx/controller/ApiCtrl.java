@@ -46,4 +46,14 @@ public class ApiCtrl {
         return R.success("加班申报记录", list);
     }
     //endregion
+
+    //region 加班统计
+    @RequestMapping("/getAddJobRecordOneDay/{date}")
+    @ResponseBody
+    public Result getAddJobRecordOneDay(@PathVariable String date) {
+        String sql = "select * from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
+        return R.success("一天所有加班申报记录", list);
+    }
+    //endregion
 }

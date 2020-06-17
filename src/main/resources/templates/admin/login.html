@@ -68,6 +68,10 @@
         var app = angular.module('app', []);
         app.controller('loginCtrl', function ($scope, $http) {
             $scope.login = function () {
+                if (window.Util.isNull($scope.model.account) || window.Util.isNull($scope.model.password)) {
+                    layer.msg('请输入正确的工号和密码');
+                    return;
+                }
                 $http.post('/admin/doLogin', $scope.model).success(function (data) {
                     layer.msg(data.message);
                     if (data.success) {

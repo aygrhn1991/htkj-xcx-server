@@ -13,7 +13,7 @@ app.config(function ($routeProvider) {
             redirectTo: '/addjobrecord'
         });
 });
-app.run(function ($rootScope, $http, $location, $timeout) {
+app.run(function ($rootScope, $http, $location) {
     $rootScope.getAdmin = function () {
         $http.post('/admin/getAdmin').success(function (data) {
             $rootScope.admin = data.data.admin;
@@ -29,13 +29,16 @@ app.run(function ($rootScope, $http, $location, $timeout) {
                 select: false,
                 pages: [{id: 3, name: '加班申报', select: false, path: '#/addjobrecord'}]
             }];
+            layui.use('element', function () {
+                var element = layui.element;
+            });
             $rootScope.matchMenu();
         });
     };
     if (!window.Util.isNull(window.Util.getCookie('admin'))) {
         $rootScope.getAdmin();
     } else {
-        window.location.href = '/admin/index';
+        window.location.href = '/admin/login';
     }
     $rootScope.matchMenu = function () {
         $rootScope.menu.forEach(function (e) {
@@ -63,9 +66,6 @@ app.run(function ($rootScope, $http, $location, $timeout) {
         if ($rootScope.menu != null) {
             $rootScope.matchMenu();
         }
-    });
-    layui.use('element', function () {
-        var element = layui.element;
     });
 });
 app.controller('userCtrl', function ($scope, $http) {

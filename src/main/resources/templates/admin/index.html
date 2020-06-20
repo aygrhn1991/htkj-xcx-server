@@ -48,7 +48,7 @@
                 <li class="layui-nav-item" ng-class="{'layui-nav-itemed':m.select}" ng-click="menuClick(m)" ng-repeat="m in menu">
                     <a><span ng-bind="m.name"></span></a>
                     <dl class="layui-nav-child" ng-repeat="p in m.pages">
-                        <dd ng-class="{'layui-this':p.select}"><a ng-href="{{p.path}}" ng-bind="p.name"></a></dd>
+                        <dd ng-class="{'layui-this':p.select}"><a ng-href="{{p.path_admin}}" ng-bind="p.name"></a></dd>
                     </dl>
                 </li>
             </ul>

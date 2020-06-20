@@ -1,34 +1,62 @@
 var app = angular.module('app', ['ngRoute']);
 app.config(function ($routeProvider) {
     $routeProvider
-        .when('/user', {
-            templateUrl: '/admin/user',
+        .when('/admin/user', {
+            templateUrl: '/admin/admin/user',
             controller: 'userCtrl'
         })
-        .when('/addjobrecord', {
-            templateUrl: '/admin/addjobrecord',
+        .when('/admin/addjobrecord', {
+            templateUrl: '/admin/admin/addjobrecord',
             controller: 'addJobRecordCtrl'
         })
+        .when('/produce/plan', {
+            templateUrl: '/admin/produce/plan',
+            controller: 'planCtrl'
+        })
         .otherwise({
-            redirectTo: '/addjobrecord'
+            redirectTo: '/admin/addjobrecord'
         });
 });
 app.run(function ($rootScope, $http, $location) {
     $rootScope.getAdmin = function () {
-        $http.post('/admin/getAdmin').success(function (data) {
+        $http.post('/admin/getAdminAndPage').success(function (data) {
             $rootScope.admin = data.data.admin;
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
-            $rootScope.menu = [{
-                id: 1,
-                name: '员工管理',
-                select: false,
-                pages: [{id: 1, name: '员工信息审核', select: false, path: '#/user'}]
-            }, {
-                id: 2,
-                name: '加班申报',
-                select: false,
-                pages: [{id: 3, name: '加班申报', select: false, path: '#/addjobrecord'}]
-            }];
+            $rootScope.menu = [];
+            var pages = data.data.page;
+            if ($rootScope.admin.userid == 12159) {
+                pages.push({
+                    id: 0,
+                    name: '员工管理',
+                    sort: 1,
+                    group_name: '员工管理',
+                    group_sort: 0,
+                    image: 'empty.jpg',
+                    path_admin: '#/admin/user',
+                    path_app: null,
+                    systime: null
+                });
+            }
+            pages.sort(function (x, y) {
+                return x.group_sort - y.group_sort;
+            });
+            var set = new Set();
+            pages.forEach(function (x) {
+                set.add(x.group_name);
+            });
+            var group = Array.from(set);
+            group.forEach(function (x) {
+                var menu = {name: x, select: false, pages: []};
+                pages.forEach(function (y) {
+                    if (y.group_name == x) {
+                        menu.pages.push(y);
+                    }
+                })
+                menu.pages.sort(function (x, y) {
+                    return x.sort - y.sort;
+                });
+                $rootScope.menu.push(menu);
+            })
             layui.use('element', function () {
                 var element = layui.element;
             });
@@ -41,20 +69,20 @@ app.run(function ($rootScope, $http, $location) {
         window.location.href = '/admin/login';
     }
     $rootScope.matchMenu = function () {
-        $rootScope.menu.forEach(function (e) {
-            e.select = false;
-            e.pages.forEach(function (f) {
-                f.select = false;
-                if (f.path == '#' + $location.path()) {
-                    f.select = true;
-                    e.select = true;
+        $rootScope.menu.forEach(function (x) {
+            x.select = false;
+            x.pages.forEach(function (y) {
+                y.select = false;
+                if (y.path_admin == '#' + $location.path()) {
+                    y.select = true;
+                    x.select = true;
                 }
             });
         });
     };
     $rootScope.menuClick = function (e) {
-        $rootScope.menu.forEach(function (f) {
-            f.select = false;
+        $rootScope.menu.forEach(function (x) {
+            x.select = false;
         });
         e.select = true;
     };
@@ -62,7 +90,7 @@ app.run(function ($rootScope, $http, $location) {
         window.Util.removeCookie('admin');
         window.location.href = '/admin/login';
     };
-    $rootScope.$on('$routeChangeSuccess', function (evt, current, previous) {
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
         if ($rootScope.menu != null) {
             $rootScope.matchMenu();
         }
@@ -71,7 +99,7 @@ app.run(function ($rootScope, $http, $location) {
 app.controller('userCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.loading = layer.load();
-        $http.post('/admin/getUserList', $scope.search).success(function (data) {
+        $http.post('/api/getUserList', $scope.search).success(function (data) {
             layer.close($scope.loading);
             if (data.success) {
                 $scope.data = data.data;
@@ -81,7 +109,7 @@ app.controller('userCtrl', function ($scope, $http) {
     };
     $scope.delete = function (e) {
         layer.confirm('此操作将拒绝员工认证', null, function () {
-            $http.post('/admin/deleteUser/' + e.id).success(function (data) {
+            $http.post('/api/deleteUser/' + e.id).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();
@@ -91,7 +119,7 @@ app.controller('userCtrl', function ($scope, $http) {
     };
     $scope.editState = function (e, state) {
         layer.confirm('此操作将更改员工账号状态', null, function () {
-            $http.post('/admin/updateUserState/' + e.id + '/' + state).success(function (data) {
+            $http.post('/api/updateUserState/' + e.id + '/' + state).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();
@@ -135,12 +163,12 @@ app.controller('userCtrl', function ($scope, $http) {
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.loading = layer.load();
-        $http.post('/admin/getAddJobRecord', $scope.search).success(function (data) {
+        $http.post('/api/getAddJobRecord', $scope.search).success(function (data) {
             layer.close($scope.loading);
             $scope.data = data.data;
             $scope.makePage(data);
         });
-        $http.post('/admin/getAddJobRecordOneDay/' + $scope.search.string1).success(function (data) {
+        $http.post('/api/getAddJobRecordOneDay/' + $scope.search.string1).success(function (data) {
             $scope.statistic = {
                 userCount: 0,
                 meal1Count: 0,
@@ -186,7 +214,7 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         $scope.loading = null;
         $scope.search = window.Util.getSearchObject();
         $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
-        $http.post('/admin/getAddJobRecordAllDate').success(function (data) {
+        $http.post('/api/getAddJobRecordAllDate').success(function (data) {
             var dateList = {};
             data.data.forEach(function (x) {
                 dateList[x.date] = '';
@@ -203,4 +231,6 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         $scope.get();
     };
     $scope.reset();
+});
+app.controller('planCtrl', function ($scope, $http) {
 });

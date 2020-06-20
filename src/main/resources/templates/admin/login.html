@@ -19,7 +19,7 @@
             <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-username"></label>
-                    <input type="text" placeholder="工号" class="layui-input" ng-model="model.account">
+                    <input type="text" placeholder="工号" class="layui-input" ng-model="model.userid">
                 </div>
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-password"></label>
@@ -68,7 +68,7 @@
         var app = angular.module('app', []);
         app.controller('loginCtrl', function ($scope, $http) {
             $scope.login = function () {
-                if (window.Util.isNull($scope.model.account) || window.Util.isNull($scope.model.password)) {
+                if (window.Util.isNull($scope.model.userid) || window.Util.isNull($scope.model.password)) {
                     layer.msg('请输入正确的工号和密码');
                     return;
                 }
@@ -81,8 +81,7 @@
                 });
             };
             $scope.pageModel = {
-                id: null,
-                account: null,
+                userid: null,
                 password: null,
                 state: null,
                 systime: null

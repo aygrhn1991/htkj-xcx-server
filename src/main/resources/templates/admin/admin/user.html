@@ -1,3 +1,23 @@
+<form>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">员工姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" ng-model="search.string1">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">账号状态</label>
+            <div class="layui-input-inline">
+                <select class="layui-input" ng-options="x.id as x.name for x in state" ng-model="search.number1"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn" ng-click="get()">搜索</button>
+            <button class="layui-btn" ng-click="reset()">重置</button>
+        </div>
+    </div>
+</form>
 <table class="layui-table">
     <thead>
     <tr>

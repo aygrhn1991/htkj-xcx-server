@@ -97,10 +97,16 @@ app.run(function ($rootScope, $http, $location) {
     });
 });
 app.controller('userCtrl', function ($scope, $http) {
+    $scope.state = [
+        {id: -1, name: '全部'},
+        {id: 1, name: '未审核'},
+        {id: 2, name: '正常'},
+        {id: 3, name: '禁用'},
+    ];
     $scope.get = function () {
-        $scope.loading = layer.load();
-        $http.post('/api/getUserList', $scope.search).success(function (data) {
-            layer.close($scope.loading);
+        $scope.search.loading = layer.load();
+        $http.post('/api/getUser', $scope.search).success(function (data) {
+            layer.close($scope.search.loading);
             if (data.success) {
                 $scope.data = data.data;
                 $scope.makePage(data);
@@ -109,7 +115,7 @@ app.controller('userCtrl', function ($scope, $http) {
     };
     $scope.delete = function (e) {
         layer.confirm('此操作将拒绝员工认证', null, function () {
-            $http.post('/api/deleteUser/' + e.id).success(function (data) {
+            $http.post(`/api/deleteUser/${e.id}`).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();
@@ -119,7 +125,7 @@ app.controller('userCtrl', function ($scope, $http) {
     };
     $scope.editState = function (e, state) {
         layer.confirm('此操作将更改员工账号状态', null, function () {
-            $http.post('/api/updateUserState/' + e.id + '/' + state).success(function (data) {
+            $http.post(`/api/updateUserState/${e.id}/${state}`).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();
@@ -144,27 +150,18 @@ app.controller('userCtrl', function ($scope, $http) {
             }
         });
     };
-    $scope.m = {
-        id: null,
-        openid: null,
-        name: null,
-        department_id: null,
-        state: null,
-        systime: null
-    };
     $scope.reset = function () {
-        $scope.loading = null;
         $scope.search = window.Util.getSearchObject();
-        $scope.model = window.Util.copyObject($scope.m);
+        $scope.search.number1 = -1;
         $scope.get();
     };
     $scope.reset();
 });
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {
-        $scope.loading = layer.load();
+        $scope.search.loading = layer.load();
         $http.post('/api/getAddJobRecord', $scope.search).success(function (data) {
-            layer.close($scope.loading);
+            layer.close($scope.search.loading);
             $scope.data = data.data;
             $scope.makePage(data);
         });

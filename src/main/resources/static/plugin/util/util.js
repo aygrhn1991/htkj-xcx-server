@@ -316,6 +316,7 @@ window.Util = {
     //#region 项目
     getSearchObject: function () {
         var obj = {
+            loading: null,
             page: 1,
             limit: 10,
             string1: null,

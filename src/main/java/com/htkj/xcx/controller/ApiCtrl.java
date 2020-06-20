@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
 
@@ -30,13 +31,24 @@ public class ApiCtrl {
     }
 
     //region 员工(admin)
-    @RequestMapping("/getUserList")
+    @RequestMapping("/getUser")
     @ResponseBody
-    public Result getUserList(@RequestBody Search model) {
-        String sql = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.state,t.id limit " + UtilPage.getPage(model);
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
-        sql = "select count(*) from t_user";
-        int count = this.jdbc.queryForObject(sql, Integer.class);
+    public Result getUser(@RequestBody Search model) {
+        String sql1 = "select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id where 1=1";
+        String sql2 = "select count(*) from t_user t where 1=1";
+        if (!(model.string1 == null || model.string1.isEmpty())) {
+            String and = " and t.name like '%" + model.string1 + "%' ";
+            sql1 += and;
+            sql2 += and;
+        }
+        if (model.number1 != -1) {
+            String and = " and t.state=" + model.number1;
+            sql1 += and;
+            sql2 += and;
+        }
+        sql1 += " order by t.id limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
+        int count = this.jdbc.queryForObject(sql2, Integer.class);
         return R.success("员工列表", count, list);
     }
 

@@ -1,8 +1,5 @@
 package com.htkj.xcx.suit.middleware;
 
-import com.google.gson.Gson;
-import com.htkj.xcx.suit.response.R;
-import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,10 +10,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 @Component
@@ -36,28 +31,7 @@ public class XcxInterceptor implements HandlerInterceptor {
         boolean isController = (!handlerMethod.getBeanType().isAnnotationPresent(RestController.class) && handlerMethod.getBeanType().isAnnotationPresent(Controller.class));
         boolean isView = isPage && !isJosn && isController;
         request.setAttribute("isView", isView);
-        //登录检查
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("admin")) {
-                    //已登录
-                    return true;
-                }
-            }
-        }
-        //未登录
-        if (isView) {
-            response.sendRedirect("/admin/login");
-        } else {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json;charset=utf-8");
-            try (PrintWriter out = response.getWriter()) {
-                Result r = R.exception("登录信息失效，请重新登录", null);
-                out.println(new Gson().toJson(r));
-            }
-        }
-        return false;
+        return true;
     }
 
     @Override

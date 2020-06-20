@@ -59,7 +59,7 @@ public class AdminCtrl {
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result doLogin(@RequestBody Admin model) {
-        String sql = "select * from t_admin t where t.account=?";
+        String sql = "select t.* from t_admin t where t.account=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.account);
         if (list.size() == 0) {
             return R.error("账号不存在或未授权");
@@ -81,10 +81,12 @@ public class AdminCtrl {
     }
     //endregion
 
+    //region layout
     @RequestMapping("/index")
     public String index() {
         return "admin/index";
     }
+    //endregion
 
     @RequestMapping("/user")
     public String user() {
@@ -136,7 +138,7 @@ public class AdminCtrl {
     @RequestMapping("/getAddJobRecordAllDate")
     @ResponseBody
     public Result getAddJobRecordAllDate() {
-        String sql = "select t.date from t_add_job_record t group by t.date";
+        String sql = "select t.date from t_add_job_record t where t.del=0 group by t.date";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("所有有加班记录的日期", list);
     }

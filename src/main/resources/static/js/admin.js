@@ -5,6 +5,10 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/admin/user',
             controller: 'userCtrl'
         })
+        .when('/admin/admin', {
+            templateUrl: '/admin/admin/admin',
+            controller: 'adminCtrl'
+        })
         .when('/admin/addjobrecord', {
             templateUrl: '/admin/admin/addjobrecord',
             controller: 'addJobRecordCtrl'
@@ -26,13 +30,24 @@ app.run(function ($rootScope, $http, $location) {
             var pages = data.data.page;
             if ($rootScope.admin.userid == 12159) {
                 pages.push({
-                    id: 0,
+                    id: -1,
                     name: '员工管理',
                     sort: 1,
                     group_name: '员工管理',
                     group_sort: 0,
                     image: 'empty.jpg',
                     path_admin: '#/admin/user',
+                    path_app: null,
+                    systime: null
+                });
+                pages.push({
+                    id: -2,
+                    name: '账号管理',
+                    sort: 2,
+                    group_name: '员工管理',
+                    group_sort: 0,
+                    image: 'empty.jpg',
+                    path_admin: '#/admin/admin',
                     path_app: null,
                     systime: null
                 });
@@ -156,6 +171,8 @@ app.controller('userCtrl', function ($scope, $http) {
         $scope.get();
     };
     $scope.reset();
+});
+app.controller('adminCtrl', function ($scope, $http) {
 });
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {

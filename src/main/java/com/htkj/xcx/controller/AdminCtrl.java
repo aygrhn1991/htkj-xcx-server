@@ -94,6 +94,11 @@ public class AdminCtrl {
         return "admin/admin/user";
     }
 
+    @RequestMapping("/admin/admin")
+    public String admin() {
+        return "admin/admin/admin";
+    }
+
     @RequestMapping("/admin/addjobrecord")
     public String addjobrecord() {
         return "admin/admin/addjobrecord";

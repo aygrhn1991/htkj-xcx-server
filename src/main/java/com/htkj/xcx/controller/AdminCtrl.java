@@ -89,14 +89,19 @@ public class AdminCtrl {
         return "admin/index";
     }
 
-    @RequestMapping("/admin/user")
-    public String user() {
-        return "admin/admin/user";
+    @RequestMapping("/welcome")
+    public String welcome() {
+        return "admin/welcome";
     }
 
-    @RequestMapping("/admin/admin")
+    @RequestMapping("/user/user")
+    public String user() {
+        return "admin/user/user";
+    }
+
+    @RequestMapping("/user/admin")
     public String admin() {
-        return "admin/admin/admin";
+        return "admin/user/admin";
     }
 
     @RequestMapping("/admin/addjobrecord")

@@ -1,12 +1,12 @@
 var app = angular.module('app', ['ngRoute']);
 app.config(function ($routeProvider) {
     $routeProvider
-        .when('/admin/user', {
-            templateUrl: '/admin/admin/user',
+        .when('/user/user', {
+            templateUrl: '/admin/user/user',
             controller: 'userCtrl'
         })
-        .when('/admin/admin', {
-            templateUrl: '/admin/admin/admin',
+        .when('/user/admin', {
+            templateUrl: '/admin/user/admin',
             controller: 'adminCtrl'
         })
         .when('/admin/addjobrecord', {
@@ -17,43 +17,49 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/produce/plan',
             controller: 'planCtrl'
         })
+        .when('/welcome', {
+            templateUrl: '/admin/welcome'
+        })
         .when('/unauthorized', {
             templateUrl: '/error/unauthorized'
         })
         .otherwise({
-            redirectTo: '/admin/addjobrecord'
+            redirectTo: '/welcome'
         });
 });
 app.run(function ($rootScope, $http, $location) {
+    var adminPage = [{
+        id: -1,
+        name: '员工管理',
+        sort: 1,
+        group_name: '员工管理',
+        group_sort: 0,
+        image: 'empty.jpg',
+        path_admin: '#/user/user',
+        path_app: null,
+        systime: null
+    }, {
+        id: -2,
+        name: '账号管理',
+        sort: 2,
+        group_name: '员工管理',
+        group_sort: 0,
+        image: 'empty.jpg',
+        path_admin: '#/user/admin',
+        path_app: null,
+        systime: null
+    }];
+    var systemPage = ['#/welcome', '#/password'];
     $rootScope.getAdmin = function () {
         $http.post('/admin/getAdminAndPage').success(function (data) {
             $rootScope.admin = data.data.admin;
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
             $rootScope.menu = [];
             var pages = data.data.page;
-            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12155) {
-                pages.push({
-                    id: -1,
-                    name: '员工管理',
-                    sort: 1,
-                    group_name: '员工管理',
-                    group_sort: 0,
-                    image: 'empty.jpg',
-                    path_admin: '#/admin/user',
-                    path_app: null,
-                    systime: null
-                });
-                pages.push({
-                    id: -2,
-                    name: '账号管理',
-                    sort: 2,
-                    group_name: '员工管理',
-                    group_sort: 0,
-                    image: 'empty.jpg',
-                    path_admin: '#/admin/admin',
-                    path_app: null,
-                    systime: null
-                });
+            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12156) {
+                adminPage.forEach(function (x) {
+                    pages.push(x);
+                })
             }
             pages.sort(function (x, y) {
                 return x.group_sort - y.group_sort;
@@ -88,18 +94,27 @@ app.run(function ($rootScope, $http, $location) {
         window.location.href = '/admin/login';
     }
     $rootScope.matchMenu = function () {
-        for (var i = 0; i < $rootScope.menu.length; i++) {
-            $rootScope.menu[i].select = false;
-            for (var j = 0; j < $rootScope.menu[i].pages.length; j++) {
-                $rootScope.menu[i].pages[j].select = false;
-                if ($rootScope.menu[i].pages[j].path_admin == '#' + $location.path()) {
-                    $rootScope.menu[i].pages[j].select = true;
-                    $rootScope.menu[i].select = true;
+        var hasPage = false;
+        var path = '#' + $location.path();
+        $rootScope.menu.forEach(function (x) {
+            x.select = false;
+            x.pages.forEach(function (y) {
+                y.select = false;
+                if (y.path_admin == path) {
+                    y.select = true;
+                    x.select = true;
+                    hasPage = true;
+                }
+            })
+        })
+        if (!hasPage) {
+            for (var i = 0; i < systemPage.length; i++) {
+                if (path == systemPage[i]) {
                     return;
                 }
             }
+            $location.path('/unauthorized');
         }
-        $location.path('/unauthorized');
     };
     $rootScope.menuClick = function (e) {
         $rootScope.menu.forEach(function (x) {
@@ -124,14 +139,18 @@ app.controller('userCtrl', function ($scope, $http) {
         {id: 2, name: '正常'},
         {id: 3, name: '禁用'},
     ];
+    $scope.getDepartment = function () {
+        $http.post('/api/common/getDepartment', $scope.search).success(function (data) {
+            $scope.department = data.data;
+            $scope.department.unshift({id: -1, name: '全部'});
+        });
+    };
     $scope.get = function () {
         $scope.search.loading = layer.load();
         $http.post('/api/getUser', $scope.search).success(function (data) {
             layer.close($scope.search.loading);
-            if (data.success) {
-                $scope.data = data.data;
-                $scope.makePage(data);
-            }
+            $scope.data = data.data;
+            $scope.makePage(data);
         });
     };
     $scope.delete = function (e) {
@@ -174,6 +193,8 @@ app.controller('userCtrl', function ($scope, $http) {
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
         $scope.search.number1 = -1;
+        $scope.search.number2 = -1;
+        $scope.getDepartment();
         $scope.get();
     };
     $scope.reset();

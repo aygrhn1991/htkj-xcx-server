@@ -42,7 +42,12 @@ public class ApiCtrl {
             sql2 += and;
         }
         if (model.number1 != -1) {
-            String and = " and t.state=" + model.number1;
+            String and = " and t.department_id=" + model.number1;
+            sql1 += and;
+            sql2 += and;
+        }
+        if (model.number2 != -1) {
+            String and = " and t.state=" + model.number2;
             sql1 += and;
             sql2 += and;
         }
@@ -88,7 +93,7 @@ public class ApiCtrl {
         sql1 += " order by t.id limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
-        return R.success("员工列表", count, list);
+        return R.success("管理员列表", count, list);
     }
 
     @RequestMapping("/deleteAdmin/{userid}")

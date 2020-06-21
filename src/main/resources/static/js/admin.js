@@ -56,7 +56,7 @@ app.run(function ($rootScope, $http, $location) {
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
             $rootScope.menu = [];
             var pages = data.data.page;
-            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12156) {
+            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12155) {
                 adminPage.forEach(function (x) {
                     pages.push(x);
                 })
@@ -200,6 +200,100 @@ app.controller('userCtrl', function ($scope, $http) {
     $scope.reset();
 });
 app.controller('adminCtrl', function ($scope, $http) {
+    $scope.state = [
+        {id: -1, name: '全部'},
+        {id: 2, name: '正常'},
+        {id: 3, name: '禁用'},
+    ];
+    $scope.getDepartment = function () {
+        $http.post('/api/common/getDepartment', $scope.search).success(function (data) {
+            $scope.department = data.data;
+            $scope.department.unshift({id: -1, name: '全部'});
+        });
+    };
+    $scope.get = function () {
+        $scope.search.loading = layer.load();
+        $http.post('/api/getAdmin', $scope.search).success(function (data) {
+            layer.close($scope.search.loading);
+            $scope.data = data.data;
+            $scope.makePage(data);
+        });
+    };
+    $scope.showAddModal = function () {
+        $scope.m = {
+            id: 1, name: 'a'
+        }
+        $scope.index = layer.open({
+            type: 1,
+            content: $('#modal'),
+            shade: 0,
+            title:'add',
+            success: function (layero) {
+
+            }
+        });
+    };
+    $scope.showEditModal = function () {
+        $scope.m.id = 2;
+        $scope.m.name = 'b';
+        $scope.index = layer.open({
+            type: 1,
+            content: $('#modal'),
+            shade: 0,
+            title:'edit',
+            success: function (layero) {
+
+            }
+        });
+    };
+    $scope.close = function () {
+        layer.close($scope.index);
+    };
+    $scope.delete = function (e) {
+        layer.confirm('此操作将删除管理员账号', null, function () {
+            $http.post(`/api/deleteAdmin/${e.userid}`).success(function (data) {
+                layer.msg(data.message);
+                if (data.success) {
+                    $scope.get();
+                }
+            });
+        });
+    };
+    $scope.editState = function (e, state) {
+        layer.confirm('此操作将更改管理员账号状态', null, function () {
+            $http.post(`/api/updateAdminState/${e.userid}/${state}`).success(function (data) {
+                layer.msg(data.message);
+                if (data.success) {
+                    $scope.get();
+                }
+            });
+        });
+    };
+    $scope.makePage = function (data) {
+        layui.laypage.render({
+            elem: 'page',
+            count: data.count,
+            curr: $scope.search.page,
+            limit: $scope.search.limit,
+            limits: [10, 20, 30, 40, 50],
+            layout: ['prev', 'page', 'next', 'count', 'limit'],
+            jump: function (obj, first) {
+                $scope.search.page = obj.curr;
+                $scope.search.limit = obj.limit;
+                if (!first) {
+                    $scope.get();
+                }
+            }
+        });
+    };
+    $scope.reset = function () {
+        $scope.search = window.Util.getSearchObject();
+        $scope.search.number1 = -1;
+        $scope.search.number2 = -1;
+        $scope.getDepartment();
+        $scope.get();
+    };
+    $scope.reset();
 });
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {

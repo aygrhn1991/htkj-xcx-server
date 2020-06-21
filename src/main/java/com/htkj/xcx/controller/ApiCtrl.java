@@ -78,7 +78,7 @@ public class ApiCtrl {
     @RequestMapping("/getAdmin")
     @ResponseBody
     public Result getAdmin(@RequestBody Search model) {
-        String sql1 = "select t1.*,t2.name department_name from t_admin t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where 1=1";
+        String sql1 = "select t.*,t1.name name,t2.name department_name from t_admin t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where 1=1";
         String sql2 = "select count(*) from t_admin t left join t_user t1 on t.userid=t1.id where 1=1";
         if (!(model.string1 == null || model.string1.isEmpty())) {
             String and = " and t1.name like '%" + model.string1 + "%' ";
@@ -86,11 +86,16 @@ public class ApiCtrl {
             sql2 += and;
         }
         if (model.number1 != -1) {
-            String and = " and t.state=" + model.number1;
+            String and = " and t1.department_id=" + model.number1;
             sql1 += and;
             sql2 += and;
         }
-        sql1 += " order by t.id limit " + UtilPage.getPage(model);
+        if (model.number2 != -1) {
+            String and = " and t.state=" + model.number2;
+            sql1 += and;
+            sql2 += and;
+        }
+        sql1 += " order by t.userid limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
         return R.success("管理员列表", count, list);
@@ -99,17 +104,17 @@ public class ApiCtrl {
     @RequestMapping("/deleteAdmin/{userid}")
     @ResponseBody
     public Result deleteAdmin(@PathVariable int userid) {
-        String sql = "delete from t_user where id=?";
+        String sql = "delete from t_admin where userid=?";
         int count = this.jdbc.update(sql, userid);
-        return R.success("员工申请已拒绝");
+        return R.success("管理员账号已删除");
     }
 
     @RequestMapping("/updateAdminState/{userid}/{state}")
     @ResponseBody
     public Result updateAdminState(@PathVariable int userid, @PathVariable int state) {
-        String sql = "update t_user t set t.state=? where t.id=?";
+        String sql = "update t_admin t set t.state=? where t.userid=?";
         int count = this.jdbc.update(sql, state, userid);
-        return R.success("员工状态更新成功");
+        return R.success("管理员账号状态更新成功");
     }
     //endregion
 

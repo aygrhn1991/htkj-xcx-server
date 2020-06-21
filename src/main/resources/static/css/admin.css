@@ -1,3 +1,9 @@
 a {
     cursor: pointer;
 }
+
+.modal {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}

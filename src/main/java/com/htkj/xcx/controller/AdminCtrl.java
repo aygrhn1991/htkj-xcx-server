@@ -2,6 +2,7 @@ package com.htkj.xcx.controller;
 
 import com.google.gson.Gson;
 import com.htkj.xcx.model.Admin;
+import com.htkj.xcx.model.UserState;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
@@ -60,10 +61,13 @@ public class AdminCtrl {
         String sql = "select t.* from t_admin t where t.userid=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.userid);
         if (list.size() == 0) {
-            return R.error("账号不存在或未授权");
+            return R.error("账号未授权");
         }
         if (!list.get(0).get("password").toString().equals(model.password)) {
             return R.error("密码错误");
+        }
+        if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
+            return R.error("管理员账号已禁用");
         }
         return R.success("登录成功", list.get(0));
     }

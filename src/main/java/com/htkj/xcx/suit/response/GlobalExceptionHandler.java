@@ -18,6 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public Object exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.error("异常拦截器", e);
         boolean isView = (Boolean) request.getAttribute("isView");
         if (isView) {
             response.sendRedirect("/error/error");

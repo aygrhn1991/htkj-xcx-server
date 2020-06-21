@@ -18,4 +18,9 @@ public class ErrorCtrl {
         return "error/error";
     }
 
+    @RequestMapping("/unauthorized")
+    public String unauthorized() {
+        return "error/unauthorized";
+    }
+
 }

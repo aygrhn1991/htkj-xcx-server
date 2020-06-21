@@ -30,7 +30,7 @@ public class ApiCtrl {
         return R.success("ok", message);
     }
 
-    //region 员工(admin)
+    //region 员工审核(admin)
     @RequestMapping("/getUser")
     @ResponseBody
     public Result getUser(@RequestBody Search model) {
@@ -69,7 +69,46 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 加班(user)
+    //region 管理员账号管理(admin)
+    @RequestMapping("/getAdmin")
+    @ResponseBody
+    public Result getAdmin(@RequestBody Search model) {
+        String sql1 = "select t1.*,t2.name department_name from t_admin t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where 1=1";
+        String sql2 = "select count(*) from t_admin t left join t_user t1 on t.userid=t1.id where 1=1";
+        if (!(model.string1 == null || model.string1.isEmpty())) {
+            String and = " and t1.name like '%" + model.string1 + "%' ";
+            sql1 += and;
+            sql2 += and;
+        }
+        if (model.number1 != -1) {
+            String and = " and t.state=" + model.number1;
+            sql1 += and;
+            sql2 += and;
+        }
+        sql1 += " order by t.id limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
+        int count = this.jdbc.queryForObject(sql2, Integer.class);
+        return R.success("员工列表", count, list);
+    }
+
+    @RequestMapping("/deleteAdmin/{userid}")
+    @ResponseBody
+    public Result deleteAdmin(@PathVariable int userid) {
+        String sql = "delete from t_user where id=?";
+        int count = this.jdbc.update(sql, userid);
+        return R.success("员工申请已拒绝");
+    }
+
+    @RequestMapping("/updateAdminState/{userid}/{state}")
+    @ResponseBody
+    public Result updateAdminState(@PathVariable int userid, @PathVariable int state) {
+        String sql = "update t_user t set t.state=? where t.id=?";
+        int count = this.jdbc.update(sql, state, userid);
+        return R.success("员工状态更新成功");
+    }
+    //endregion
+
+    //region 加班申报&个人加班记录(app)
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
@@ -90,7 +129,7 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 加班(admin)
+    //region 加班记录(admin&app)
     @RequestMapping("/getAddJobRecord")
     @ResponseBody
     public Result getAddJobRecord(@RequestBody Search model) {

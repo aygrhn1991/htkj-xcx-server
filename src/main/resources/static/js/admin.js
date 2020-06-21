@@ -17,6 +17,9 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/produce/plan',
             controller: 'planCtrl'
         })
+        .when('/unauthorized', {
+            templateUrl: '/error/unauthorized'
+        })
         .otherwise({
             redirectTo: '/admin/addjobrecord'
         });
@@ -28,7 +31,7 @@ app.run(function ($rootScope, $http, $location) {
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
             $rootScope.menu = [];
             var pages = data.data.page;
-            if ($rootScope.admin.userid == 12159) {
+            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12155) {
                 pages.push({
                     id: -1,
                     name: '员工管理',
@@ -76,6 +79,7 @@ app.run(function ($rootScope, $http, $location) {
                 var element = layui.element;
             });
             $rootScope.matchMenu();
+            $rootScope.startListener();
         });
     };
     if (!window.Util.isNull(window.Util.getCookie('admin'))) {
@@ -84,16 +88,18 @@ app.run(function ($rootScope, $http, $location) {
         window.location.href = '/admin/login';
     }
     $rootScope.matchMenu = function () {
-        $rootScope.menu.forEach(function (x) {
-            x.select = false;
-            x.pages.forEach(function (y) {
-                y.select = false;
-                if (y.path_admin == '#' + $location.path()) {
-                    y.select = true;
-                    x.select = true;
+        for (var i = 0; i < $rootScope.menu.length; i++) {
+            $rootScope.menu[i].select = false;
+            for (var j = 0; j < $rootScope.menu[i].pages.length; j++) {
+                $rootScope.menu[i].pages[j].select = false;
+                if ($rootScope.menu[i].pages[j].path_admin == '#' + $location.path()) {
+                    $rootScope.menu[i].pages[j].select = true;
+                    $rootScope.menu[i].select = true;
+                    return;
                 }
-            });
-        });
+            }
+        }
+        $location.path('/unauthorized');
     };
     $rootScope.menuClick = function (e) {
         $rootScope.menu.forEach(function (x) {
@@ -105,11 +111,11 @@ app.run(function ($rootScope, $http, $location) {
         window.Util.removeCookie('admin');
         window.location.href = '/admin/login';
     };
-    $rootScope.$on('$routeChangeStart', function (event, next, current) {
-        if ($rootScope.menu != null) {
+    $rootScope.startListener = function () {
+        $rootScope.$on('$routeChangeStart', function (event, next, current) {
             $rootScope.matchMenu();
-        }
-    });
+        });
+    };
 });
 app.controller('userCtrl', function ($scope, $http) {
     $scope.state = [

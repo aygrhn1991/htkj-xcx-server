@@ -27,8 +27,16 @@ public class ApiCommonCtrl {
     @RequestMapping("/getDepartment")
     @ResponseBody
     public Result getDepartment() {
-        String sql = String.format("select * from t_department");
+        String sql = String.format("select t.* from t_department t order by t.id");
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("部门列表", list);
+    }
+
+    @RequestMapping("/getUser")
+    @ResponseBody
+    public Result getUser() {
+        String sql = String.format("select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.department_id,t.name,t.id");
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
+        return R.success("员工列表", list);
     }
 }

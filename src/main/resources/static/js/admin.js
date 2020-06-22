@@ -140,7 +140,7 @@ app.controller('userCtrl', function ($scope, $http) {
         {id: 3, name: '禁用'},
     ];
     $scope.getDepartment = function () {
-        $http.post('/api/common/getDepartment', $scope.search).success(function (data) {
+        $http.post('/api/common/getDepartment').success(function (data) {
             $scope.department = data.data;
             $scope.department.unshift({id: -1, name: '全部'});
         });
@@ -206,9 +206,14 @@ app.controller('adminCtrl', function ($scope, $http) {
         {id: 3, name: '禁用'},
     ];
     $scope.getDepartment = function () {
-        $http.post('/api/common/getDepartment', $scope.search).success(function (data) {
+        $http.post('/api/common/getDepartment').success(function (data) {
             $scope.department = data.data;
             $scope.department.unshift({id: -1, name: '全部'});
+        });
+    };
+    $scope.getUser = function () {
+        $http.post('/api/common/getUser').success(function (data) {
+            $scope.user = data.data;
         });
     };
     $scope.get = function () {
@@ -227,7 +232,9 @@ app.controller('adminCtrl', function ($scope, $http) {
             type: 1,
             content: $('#modal'),
             shade: 0,
-            title:'add',
+            title: 'add',
+            area: ['600px'],
+            move: false,
             success: function (layero) {
 
             }
@@ -240,7 +247,7 @@ app.controller('adminCtrl', function ($scope, $http) {
             type: 1,
             content: $('#modal'),
             shade: 0,
-            title:'edit',
+            title: 'edit',
             success: function (layero) {
 
             }
@@ -286,11 +293,17 @@ app.controller('adminCtrl', function ($scope, $http) {
             }
         });
     };
+    $scope.pageModel = {
+        userid: null,
+        pageid: []
+    };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
         $scope.search.number1 = -1;
         $scope.search.number2 = -1;
+        $scope.model = window.Util.copyObject($scope.pageModel);
         $scope.getDepartment();
+        $scope.getUser();
         $scope.get();
     };
     $scope.reset();

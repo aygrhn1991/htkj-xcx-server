@@ -30,7 +30,7 @@ public class ApiCtrl {
         return R.success("ok", message);
     }
 
-    //region 员工审核(admin)
+    //region 员工审核(后台管理)
     @RequestMapping("/getUser")
     @ResponseBody
     public Result getUser(@RequestBody Search model) {
@@ -74,7 +74,7 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 管理员账号管理(admin)
+    //region 管理员账号管理(后台管理)
     @RequestMapping("/getAdmin")
     @ResponseBody
     public Result getAdmin(@RequestBody Search model) {
@@ -118,7 +118,7 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 加班申报&个人加班记录(app)
+    //region 加班申报&个人加班记录(小程序)
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
@@ -139,7 +139,7 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 加班记录(admin&app)
+    //region 加班记录(后台管理&小程序，统计加班)
     @RequestMapping("/getAddJobRecord")
     @ResponseBody
     public Result getAddJobRecord(@RequestBody Search model) {

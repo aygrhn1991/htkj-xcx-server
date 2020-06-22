@@ -2,8 +2,24 @@ a {
     cursor: pointer;
 }
 
-.modal {
+input[type="checkbox"],
+input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.modals {
     width: 0;
     height: 0;
     overflow: hidden;
+}
+
+.modal {
+    padding: 15px;
+}
+
+.layui-input-block {
+    line-height: 38px;
 }

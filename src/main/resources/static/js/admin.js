@@ -233,11 +233,9 @@ app.controller('adminCtrl', function ($scope, $http) {
             content: $('#modal'),
             shade: 0,
             title: 'add',
-            area: ['600px'],
+            area: '600px',
+            maxHeight: 450,
             move: false,
-            success: function (layero) {
-
-            }
         });
     };
     $scope.showEditModal = function () {

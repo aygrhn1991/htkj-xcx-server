@@ -8,6 +8,6 @@ public class AddJobRecord {
     public int meal_time;
     public int bus;
     public int bus_time;
-    public int del;
+    public int bus_to;
     public String systime;
 }

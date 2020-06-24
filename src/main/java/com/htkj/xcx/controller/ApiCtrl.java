@@ -122,20 +122,20 @@ public class ApiCtrl {
     //小程序-员工申报加班
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
-        String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
+        String sql = "select count(*) from t_add_job_record t where t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.userid, model.date);
         if (count >= 1) {
             return R.error("当天已申报加班");
         }
-        sql = "insert into t_add_job_record(userid,date,meal,meal_time,bus,bus_time,del,systime) values(?,?,?,?,?,?,0,now())";
-        count = this.jdbc.update(sql, model.userid, model.date, model.meal, model.meal_time, model.bus, model.bus_time);
+        sql = "insert into t_add_job_record(userid,date,meal,meal_time,bus,bus_time,bus_to,systime) values(?,?,?,?,?,?,?,now())";
+        count = this.jdbc.update(sql, model.userid, model.date, model.meal, model.meal_time, model.bus, model.bus_time, model.bus_to);
         return R.success("申报加班成功", count);
     }
 
     //小程序-员工查看自己加班记录
     @RequestMapping("/getAddJobRecordOfUser/{userid}")
     public Result getAddJobRecordOfUser(@PathVariable String userid) {
-        String sql = "select * from t_add_job_record t where t.del=0 and t.userid=? order by t.date desc";
+        String sql = "select * from t_add_job_record t where t.userid=? order by t.date desc";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         return R.success("加班申报记录", list);
     }
@@ -153,19 +153,18 @@ public class ApiCtrl {
     @RequestMapping("/getAddJobRecordOfDate")
     @ResponseBody
     public Result getAddJobRecordOfDate(@RequestBody Search model) {
-        String sql = "select t.*,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
+        String sql = "select t.*,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.string1);
-        sql = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        sql = "select count(*) from t_add_job_record t where date_format(t.date,'%Y-%m-%d')=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.string1);
         return R.success("加班申报记录(分页)", count, list);
     }
 
 
-
     @RequestMapping("/getAddJobRecordAllDate")
     @ResponseBody
     public Result getAddJobRecordAllDate() {
-        String sql = "select t.date from t_add_job_record t where t.del=0 group by t.date";
+        String sql = "select t.date from t_add_job_record t group by t.date";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("所有有加班记录的日期", list);
     }
@@ -173,7 +172,7 @@ public class ApiCtrl {
     @RequestMapping("/getAddJobRecordOneDay/{date}")
     @ResponseBody
     public Result getAddJobRecordOneDay(@PathVariable String date) {
-        String sql = "select * from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
+        String sql = "select * from t_add_job_record t where date_format(t.date,'%Y-%m-%d')=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
         return R.success("一天所有加班申报记录", list);
     }

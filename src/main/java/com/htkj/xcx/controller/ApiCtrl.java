@@ -118,7 +118,8 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 加班申报&个人加班记录(小程序)
+    //region 加班
+    //小程序-员工申报加班
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.del=0 and t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
@@ -131,24 +132,35 @@ public class ApiCtrl {
         return R.success("申报加班成功", count);
     }
 
+    //小程序-员工查看自己加班记录
     @RequestMapping("/getAddJobRecordOfUser/{userid}")
     public Result getAddJobRecordOfUser(@PathVariable String userid) {
         String sql = "select * from t_add_job_record t where t.del=0 and t.userid=? order by t.date desc";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         return R.success("加班申报记录", list);
     }
-    //endregion
 
-    //region 加班记录(后台管理&小程序，统计加班)
-    @RequestMapping("/getAddJobRecord")
+    //小程序-员工删除加班记录
+    //后台-管理员删除加班记录
+    @RequestMapping("/deleteAddJobRecord/{id}")
+    public Result deleteAddJobRecord(@PathVariable String id) {
+        String sql = "delete from t_add_job_record where id=?";
+        int count = this.jdbc.update(sql, id);
+        return R.success("删除加班申报记录");
+    }
+
+    //后台-管理员按日查看加班记录
+    @RequestMapping("/getAddJobRecordOfDate")
     @ResponseBody
-    public Result getAddJobRecord(@RequestBody Search model) {
+    public Result getAddJobRecordOfDate(@RequestBody Search model) {
         String sql = "select t.*,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.del=0 and date_format(t.date,'%Y-%m-%d')=? order by t.systime limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.string1);
         sql = "select count(*) from t_add_job_record t where t.del=0 and date_format(t.date,'%Y-%m-%d')=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.string1);
         return R.success("加班申报记录(分页)", count, list);
     }
+
+
 
     @RequestMapping("/getAddJobRecordAllDate")
     @ResponseBody

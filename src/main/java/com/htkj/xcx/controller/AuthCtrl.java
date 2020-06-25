@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,15 +47,13 @@ public class AuthCtrl {
         } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
             return R.error("员工账号已禁用", UserState.disabled.ordinal());
         } else {
-            return R.success("员工存在且正常", list.get(0));
+            Map m = new HashMap();
+            m.put("user", list.get(0));
+            sql = "select t1.* from t_admin_page_app t left join t_page_app t1 on t.page_id=t1.id where t.userid=? order by t1.group_sort,t1.sort";
+            List<Map<String, Object>> l = this.jdbc.queryForList(sql, list.get(0).get("id"));
+            m.put("page", l);
+            return R.success("员工存在且正常,返回员工信息与授权页面", m);
         }
-    }
-
-    @RequestMapping("/getPageOfUser/{userid}")
-    public Result getPageOfUser(@PathVariable String userid) {
-        String sql = "select t1.* from t_admin_page_app t left join t_page_app t1 on t.page_id=t1.id where t.userid=? order by t1.group_sort,t1.sort";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
-        return R.success("员工授权页面", list);
     }
 
     @RequestMapping("/register")

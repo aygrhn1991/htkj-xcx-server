@@ -4,16 +4,15 @@ import com.htkj.xcx.model.AddJobRecord;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
-import com.htkj.xcx.suit.util.UtilDate;
 import com.htkj.xcx.suit.util.UtilPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.StringUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -135,7 +134,7 @@ public class ApiCtrl {
     //小程序-员工查看自己加班记录
     @RequestMapping("/getAddJobRecordOfUser/{userid}")
     public Result getAddJobRecordOfUser(@PathVariable String userid) {
-        String sql = "select * from t_add_job_record t where t.userid=? order by t.date desc";
+        String sql = "select t.* from t_add_job_record t where t.userid=? order by t.date desc";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         return R.success("加班申报记录", list);
     }
@@ -172,7 +171,7 @@ public class ApiCtrl {
     @RequestMapping("/getAddJobRecordOneDay/{date}")
     @ResponseBody
     public Result getAddJobRecordOneDay(@PathVariable String date) {
-        String sql = "select * from t_add_job_record t where date_format(t.date,'%Y-%m-%d')=?";
+        String sql = "select t.* from t_add_job_record t where date_format(t.date,'%Y-%m-%d')=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
         return R.success("一天所有加班申报记录", list);
     }

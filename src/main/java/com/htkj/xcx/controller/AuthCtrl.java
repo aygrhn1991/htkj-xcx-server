@@ -1,7 +1,8 @@
 package com.htkj.xcx.controller;
 
 import com.google.gson.Gson;
-import com.htkj.xcx.model.*;
+import com.htkj.xcx.model.User;
+import com.htkj.xcx.model.UserState;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,16 +50,16 @@ public class AuthCtrl {
         }
     }
 
-    @RequestMapping("/getUserPage/{userid}")
-    public Result getUserPage(@PathVariable String userid) {
-        String sql = "select * from t_user_page t where t.userid=%s";
+    @RequestMapping("/getPageOfUser/{userid}")
+    public Result getPageOfUser(@PathVariable String userid) {
+        String sql = "select t1.* from t_admin_page_app t left join t_page_app t1 on t.page_id=t1.id where t.userid=? order by t1.group_sort,t1.sort";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         return R.success("员工授权页面", list);
     }
 
     @RequestMapping("/register")
     public Result register(@RequestBody User model) {
-        String sql = "select * from t_user t where t.id=?";
+        String sql = "select t.* from t_user t where t.id=?";
         List<Map<String, Object>> userList = this.jdbc.queryForList(sql, model.id);
         if (userList.size() > 0) {
             return R.error("该工号已被注册");

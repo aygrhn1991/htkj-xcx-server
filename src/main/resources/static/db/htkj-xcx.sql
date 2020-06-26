@@ -11,7 +11,7 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 21/06/2020 19:17:31
+ Date: 26/06/2020 09:08:48
 */
 
 SET NAMES utf8mb4;
@@ -29,10 +29,10 @@ CREATE TABLE `t_add_job_record`  (
   `meal_time` int(1) NULL DEFAULT NULL,
   `bus` int(1) NULL DEFAULT NULL,
   `bus_time` int(1) NULL DEFAULT NULL,
-  `del` int(1) NULL DEFAULT NULL,
+  `bus_to` int(1) NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 504 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_add_job_record
@@ -92,6 +92,32 @@ INSERT INTO `t_add_job_record` VALUES (82, 12185, '2020-06-20', 1, 1, 0, 0, 0, '
 INSERT INTO `t_add_job_record` VALUES (83, 12152, '2020-06-20', 1, 1, 0, 0, 0, '2020-06-19 14:22:23');
 INSERT INTO `t_add_job_record` VALUES (84, 12152, '2020-06-21', 1, 3, 0, 0, 0, '2020-06-19 14:24:37');
 INSERT INTO `t_add_job_record` VALUES (85, 12155, '2020-06-20', 0, 0, 0, 0, 0, '2020-06-19 14:49:11');
+INSERT INTO `t_add_job_record` VALUES (91, 12139, '2020-06-23', 1, 2, 0, 0, 0, '2020-06-22 13:12:10');
+INSERT INTO `t_add_job_record` VALUES (92, 12162, '2020-06-23', 1, 2, 1, 2, 0, '2020-06-22 14:44:59');
+INSERT INTO `t_add_job_record` VALUES (93, 0, '2020-06-23', 1, 2, 1, 2, 0, '2020-06-22 14:45:09');
+INSERT INTO `t_add_job_record` VALUES (94, 12149, '2020-06-23', 1, 2, 1, 2, 0, '2020-06-22 14:58:08');
+INSERT INTO `t_add_job_record` VALUES (95, 12171, '2020-06-23', 1, 2, 1, 2, 0, '2020-06-22 16:36:42');
+INSERT INTO `t_add_job_record` VALUES (96, 12171, '2020-06-24', 1, 2, 1, 2, 0, '2020-06-22 16:37:07');
+INSERT INTO `t_add_job_record` VALUES (97, 22005, '2020-06-23', 1, 2, 0, 0, 0, '2020-06-22 16:51:48');
+INSERT INTO `t_add_job_record` VALUES (98, 12139, '2020-06-24', 1, 2, 0, 0, 0, '2020-06-23 09:26:10');
+INSERT INTO `t_add_job_record` VALUES (99, 22005, '2020-06-24', 1, 2, 0, 0, 0, '2020-06-23 11:53:51');
+INSERT INTO `t_add_job_record` VALUES (101, 0, '2020-06-26', 1, 3, 0, 0, 0, '2020-06-23 18:31:59');
+INSERT INTO `t_add_job_record` VALUES (102, 0, '2020-06-27', 1, 1, 0, 0, 0, '2020-06-23 18:32:48');
+INSERT INTO `t_add_job_record` VALUES (103, 12178, '2020-06-28', 1, 2, 0, 0, 0, '2020-06-24 08:04:09');
+INSERT INTO `t_add_job_record` VALUES (104, 22011, '2020-06-26', 1, 1, 0, 0, 0, '2020-06-24 08:07:28');
+INSERT INTO `t_add_job_record` VALUES (105, 12152, '2020-06-26', 1, 1, 0, 0, 0, '2020-06-24 09:01:59');
+INSERT INTO `t_add_job_record` VALUES (106, 12152, '2020-06-27', 1, 3, 0, 0, 0, '2020-06-24 09:02:25');
+INSERT INTO `t_add_job_record` VALUES (107, 12162, '2020-06-26', 1, 1, 1, 1, 0, '2020-06-24 11:01:56');
+INSERT INTO `t_add_job_record` VALUES (108, 12162, '2020-06-27', 1, 1, 1, 1, 0, '2020-06-24 11:02:11');
+INSERT INTO `t_add_job_record` VALUES (109, 12162, '2020-06-28', 1, 2, 1, 2, 0, '2020-06-24 11:02:38');
+INSERT INTO `t_add_job_record` VALUES (110, 12149, '2020-06-26', 1, 1, 1, 1, 0, '2020-06-24 11:02:39');
+INSERT INTO `t_add_job_record` VALUES (111, 12162, '2020-06-29', 1, 2, 1, 2, 0, '2020-06-24 11:02:52');
+INSERT INTO `t_add_job_record` VALUES (112, 12149, '2020-06-27', 1, 1, 1, 1, 0, '2020-06-24 11:02:59');
+INSERT INTO `t_add_job_record` VALUES (113, 12162, '2020-06-30', 1, 2, 1, 2, 0, '2020-06-24 11:03:02');
+INSERT INTO `t_add_job_record` VALUES (114, 12149, '2020-06-28', 1, 2, 1, 2, 0, '2020-06-24 11:03:26');
+INSERT INTO `t_add_job_record` VALUES (115, 12149, '2020-06-29', 1, 2, 1, 2, 0, '2020-06-24 11:03:43');
+INSERT INTO `t_add_job_record` VALUES (116, 12149, '2020-06-30', 1, 2, 1, 2, 0, '2020-06-24 11:03:57');
+INSERT INTO `t_add_job_record` VALUES (117, 12139, '2020-06-28', 1, 2, 0, 0, 0, '2020-06-24 13:01:48');
 
 -- ----------------------------
 -- Table structure for t_admin
@@ -107,37 +133,55 @@ CREATE TABLE `t_admin`  (
 -- ----------------------------
 -- Records of t_admin
 -- ----------------------------
-INSERT INTO `t_admin` VALUES (12159, '1', 1, '2020-06-14 19:34:13');
-INSERT INTO `t_admin` VALUES (12155, '123456', 1, '2020-06-14 22:43:39');
+INSERT INTO `t_admin` VALUES (12159, '1', 2, '2020-06-14 19:34:13');
+INSERT INTO `t_admin` VALUES (12155, '123456', 2, '2020-06-14 19:34:13');
 
 -- ----------------------------
--- Table structure for t_admin_page
+-- Table structure for t_admin_page_admin
 -- ----------------------------
-DROP TABLE IF EXISTS `t_admin_page`;
-CREATE TABLE `t_admin_page`  (
+DROP TABLE IF EXISTS `t_admin_page_admin`;
+CREATE TABLE `t_admin_page_admin`  (
   `userid` int(11) NOT NULL,
   `page_id` int(11) NOT NULL,
   PRIMARY KEY (`userid`, `page_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of t_admin_page
+-- Records of t_admin_page_admin
 -- ----------------------------
-INSERT INTO `t_admin_page` VALUES (12155, 1);
-INSERT INTO `t_admin_page` VALUES (12155, 2);
-INSERT INTO `t_admin_page` VALUES (12159, 1);
-INSERT INTO `t_admin_page` VALUES (12159, 2);
+INSERT INTO `t_admin_page_admin` VALUES (12155, 1);
+INSERT INTO `t_admin_page_admin` VALUES (12155, 2);
+INSERT INTO `t_admin_page_admin` VALUES (12159, 1);
+INSERT INTO `t_admin_page_admin` VALUES (12159, 2);
+
+-- ----------------------------
+-- Table structure for t_admin_page_app
+-- ----------------------------
+DROP TABLE IF EXISTS `t_admin_page_app`;
+CREATE TABLE `t_admin_page_app`  (
+  `userid` int(11) NOT NULL,
+  `page_id` int(11) NOT NULL,
+  PRIMARY KEY (`userid`, `page_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_admin_page_app
+-- ----------------------------
+INSERT INTO `t_admin_page_app` VALUES (12159, 1);
+INSERT INTO `t_admin_page_app` VALUES (12159, 2);
+INSERT INTO `t_admin_page_app` VALUES (12159, 3);
+INSERT INTO `t_admin_page_app` VALUES (12159, 4);
 
 -- ----------------------------
 -- Table structure for t_department
 -- ----------------------------
 DROP TABLE IF EXISTS `t_department`;
 CREATE TABLE `t_department`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_department
@@ -159,27 +203,53 @@ INSERT INTO `t_department` VALUES (14, ' 机动部', '2020-06-08 00:32:51');
 INSERT INTO `t_department` VALUES (15, '安保部', '2020-06-08 00:32:51');
 
 -- ----------------------------
--- Table structure for t_page
+-- Table structure for t_page_admin
 -- ----------------------------
-DROP TABLE IF EXISTS `t_page`;
-CREATE TABLE `t_page`  (
+DROP TABLE IF EXISTS `t_page_admin`;
+CREATE TABLE `t_page_admin`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `sort` int(11) NULL DEFAULT NULL,
+  `sort` int(2) NULL DEFAULT NULL,
   `group_name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `group_sort` int(11) NULL DEFAULT NULL,
-  `image` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `path_admin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `path_app` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `group_sort` int(2) NULL DEFAULT NULL,
+  `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of t_page
+-- Records of t_page_admin
 -- ----------------------------
-INSERT INTO `t_page` VALUES (1, '加班统计', 1, '管理', 1, 'empty.jpg', '#/admin/addjobrecord', '/pages/modules/addjob/addjob/addjob', '2020-06-20 18:26:29');
-INSERT INTO `t_page` VALUES (2, '生产计划', 1, '车间生产', 2, 'empty.jpg', '#/produce/plan', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
+INSERT INTO `t_page_admin` VALUES (1, '员工管理', 1, '员工管理', 1, 'empty.jpg', '#/admin/user/user', '2020-06-20 18:26:29');
+INSERT INTO `t_page_admin` VALUES (2, '管理员管理', 2, '员工管理', 1, 'empty.jpg', '#/admin/user/admin', '2020-06-23 15:38:12');
+INSERT INTO `t_page_admin` VALUES (3, '加班单日统计', 1, '加班管理', 2, 'empty.jpg', '#/admin/addjobrecord', '2020-06-20 18:26:29');
+INSERT INTO `t_page_admin` VALUES (4, '加班多日汇总', 2, '加班管理', 2, 'empty.jpg', '#/admin/addjobrecord', '2020-06-23 15:41:05');
+INSERT INTO `t_page_admin` VALUES (5, '生产计划', 1, '车间生产', 3, 'empty.jpg', '#/produce/plan', '2020-06-20 18:26:29');
+
+-- ----------------------------
+-- Table structure for t_page_app
+-- ----------------------------
+DROP TABLE IF EXISTS `t_page_app`;
+CREATE TABLE `t_page_app`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `sort` int(2) NULL DEFAULT NULL,
+  `group_name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `group_sort` int(2) NULL DEFAULT NULL,
+  `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `systime` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of t_page_app
+-- ----------------------------
+INSERT INTO `t_page_app` VALUES (1, '加班统计', 1, '管理', 1, 'empty.jpg', '/pages/modules/addjob/addjob/addjob', '2020-06-20 18:26:29');
+INSERT INTO `t_page_app` VALUES (2, '生产计划', 1, '车间生产', 2, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
+INSERT INTO `t_page_app` VALUES (3, '加班汇总', 2, '管理', 1, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
+INSERT INTO `t_page_app` VALUES (4, '加班单人', 3, '管理', 1, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
 
 -- ----------------------------
 -- Table structure for t_user
@@ -193,13 +263,14 @@ CREATE TABLE `t_user`  (
   `state` int(1) NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_user
 -- ----------------------------
 INSERT INTO `t_user` VALUES (0, 'o2lQZ0ZtNx00uXDOUAnqgP4kpRws', '薛永刚', 1, 2, '2020-06-12 11:51:16');
 INSERT INTO `t_user` VALUES (3, 'o2lQZ0eCo5BFSPMegiwem2e-z2MQ', '丁洁琼', 1, 2, '2020-06-17 12:22:53');
+INSERT INTO `t_user` VALUES (68, 'o2lQZ0c_hSmc5PNGy2GGvma3woEA', '李胜', 1, 2, '2020-06-23 08:31:50');
 INSERT INTO `t_user` VALUES (1215, 'o2lQZ0Yh3gAEn1GiXdIZ4pv5rXh8', '王宇', 1, 2, '2020-06-12 07:12:44');
 INSERT INTO `t_user` VALUES (7883, 'o2lQZ0Q1_Hh2yOhZ42eloJGoH5qs', '郑强', 1, 2, '2020-06-18 17:02:28');
 INSERT INTO `t_user` VALUES (10009, 'o2lQZ0e2QLy5dPAPmGhPw2xJC6X8', '刘金', 1, 2, '2020-06-12 07:31:17');
@@ -225,7 +296,7 @@ INSERT INTO `t_user` VALUES (12149, 'o2lQZ0YNVpm5ocLpWg_HUqnLFeaI', '魏景军',
 INSERT INTO `t_user` VALUES (12152, 'o2lQZ0flVbuyWWMthBYgIlg5xbXQ', '臧军望', 1, 2, '2020-06-12 12:16:21');
 INSERT INTO `t_user` VALUES (12154, 'o2lQZ0VaZkkqGX6xdP6KVOQgnmLQ', '杜秀琴', 1, 2, '2020-06-16 14:30:46');
 INSERT INTO `t_user` VALUES (12155, 'o2lQZ0eiLAAQZsh8sxQ3t1g5VRLY', '周谷春阳', 1, 2, '2020-06-12 07:09:12');
-INSERT INTO `t_user` VALUES (12159, 'o2lQZ0WMG6z_VFuJUYwEyzITQGnA', '陈玉锋', 1, 2, '2020-06-21 00:23:17');
+INSERT INTO `t_user` VALUES (12159, 'o2lQZ0WMG6z_VFuJUYwEyzITQGnA', '陈玉锋', 1, 2, '2020-06-25 18:16:10');
 INSERT INTO `t_user` VALUES (12160, 'o2lQZ0b4NJHnkcN-QMmT7h_QG95U', '胡天德', 1, 2, '2020-06-19 13:23:56');
 INSERT INTO `t_user` VALUES (12162, 'o2lQZ0br279XljFCmCG-MqGPbPF4', '高原', 1, 2, '2020-06-12 11:50:34');
 INSERT INTO `t_user` VALUES (12164, 'o2lQZ0fXBKGwOyU38NsIei2KcriM', '刘洪波', 1, 2, '2020-06-17 11:30:36');

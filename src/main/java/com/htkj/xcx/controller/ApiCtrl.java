@@ -140,7 +140,6 @@ public class ApiCtrl {
     }
 
     //小程序-员工删除加班记录
-    //后台-管理员删除加班记录
     @RequestMapping("/deleteAddJobRecord/{id}")
     public Result deleteAddJobRecord(@PathVariable String id) {
         String sql = "delete from t_add_job_record where id=?";
@@ -148,7 +147,16 @@ public class ApiCtrl {
         return R.success("删除加班申报记录");
     }
 
-    //后台-管理员按日查看加班记录
+    //小程序-管理员按日查看加班记录(不分页)
+    @RequestMapping("/getAddJobRecordOfDateWithoutPage/{date}")
+    @ResponseBody
+    public Result getAddJobRecordOfDateWithoutPage(@PathVariable String date) {
+        String sql = "select t.*,t1.name user_name,t2.name department_name from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where date_format(t.date,'%Y-%m-%d')=? order by t1.department_id,t.systime";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
+        return R.success("一天所有加班申报记录", list);
+    }
+
+    //后台-管理员按日查看加班记录(分页)
     @RequestMapping("/getAddJobRecordOfDate")
     @ResponseBody
     public Result getAddJobRecordOfDate(@RequestBody Search model) {
@@ -166,14 +174,6 @@ public class ApiCtrl {
         String sql = "select t.date from t_add_job_record t group by t.date";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("所有有加班记录的日期", list);
-    }
-
-    @RequestMapping("/getAddJobRecordOneDay/{date}")
-    @ResponseBody
-    public Result getAddJobRecordOneDay(@PathVariable String date) {
-        String sql = "select t.* from t_add_job_record t where date_format(t.date,'%Y-%m-%d')=?";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql, date);
-        return R.success("一天所有加班申报记录", list);
     }
     //endregion
 }

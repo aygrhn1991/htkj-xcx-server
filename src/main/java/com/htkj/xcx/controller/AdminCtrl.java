@@ -113,6 +113,11 @@ public class AdminCtrl {
         return "admin/addjob/addjobrecord";
     }
 
+    @RequestMapping("/addjob/addjobstatistic")
+    public String addjobstatistic() {
+        return "admin/addjob/addjobstatistic";
+    }
+
     @RequestMapping("/produce/plan")
     public String plan() {
         return "admin/produce/plan";

@@ -11,7 +11,7 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 26/06/2020 09:08:48
+ Date: 27/06/2020 20:36:07
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `t_add_job_record`  (
   `bus_to` int(1) NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 504 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 509 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_add_job_record
@@ -135,6 +135,8 @@ CREATE TABLE `t_admin`  (
 -- ----------------------------
 INSERT INTO `t_admin` VALUES (12159, '1', 2, '2020-06-14 19:34:13');
 INSERT INTO `t_admin` VALUES (12155, '123456', 2, '2020-06-14 19:34:13');
+INSERT INTO `t_admin` VALUES (12101, '123456', 2, '2020-06-14 19:34:13');
+INSERT INTO `t_admin` VALUES (12115, '123456', 2, '2020-06-14 19:34:13');
 
 -- ----------------------------
 -- Table structure for t_admin_page_admin
@@ -151,8 +153,14 @@ CREATE TABLE `t_admin_page_admin`  (
 -- ----------------------------
 INSERT INTO `t_admin_page_admin` VALUES (12155, 1);
 INSERT INTO `t_admin_page_admin` VALUES (12155, 2);
+INSERT INTO `t_admin_page_admin` VALUES (12155, 3);
+INSERT INTO `t_admin_page_admin` VALUES (12155, 4);
+INSERT INTO `t_admin_page_admin` VALUES (12155, 5);
 INSERT INTO `t_admin_page_admin` VALUES (12159, 1);
 INSERT INTO `t_admin_page_admin` VALUES (12159, 2);
+INSERT INTO `t_admin_page_admin` VALUES (12159, 3);
+INSERT INTO `t_admin_page_admin` VALUES (12159, 4);
+INSERT INTO `t_admin_page_admin` VALUES (12159, 5);
 
 -- ----------------------------
 -- Table structure for t_admin_page_app
@@ -167,10 +175,12 @@ CREATE TABLE `t_admin_page_app`  (
 -- ----------------------------
 -- Records of t_admin_page_app
 -- ----------------------------
+INSERT INTO `t_admin_page_app` VALUES (12101, 1);
+INSERT INTO `t_admin_page_app` VALUES (12115, 1);
+INSERT INTO `t_admin_page_app` VALUES (12155, 1);
+INSERT INTO `t_admin_page_app` VALUES (12155, 2);
 INSERT INTO `t_admin_page_app` VALUES (12159, 1);
 INSERT INTO `t_admin_page_app` VALUES (12159, 2);
-INSERT INTO `t_admin_page_app` VALUES (12159, 3);
-INSERT INTO `t_admin_page_app` VALUES (12159, 4);
 
 -- ----------------------------
 -- Table structure for t_department
@@ -181,7 +191,7 @@ CREATE TABLE `t_department`  (
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_department
@@ -221,10 +231,10 @@ CREATE TABLE `t_page_admin`  (
 -- ----------------------------
 -- Records of t_page_admin
 -- ----------------------------
-INSERT INTO `t_page_admin` VALUES (1, '员工管理', 1, '员工管理', 1, 'empty.jpg', '#/admin/user/user', '2020-06-20 18:26:29');
-INSERT INTO `t_page_admin` VALUES (2, '管理员管理', 2, '员工管理', 1, 'empty.jpg', '#/admin/user/admin', '2020-06-23 15:38:12');
-INSERT INTO `t_page_admin` VALUES (3, '加班单日统计', 1, '加班管理', 2, 'empty.jpg', '#/admin/addjobrecord', '2020-06-20 18:26:29');
-INSERT INTO `t_page_admin` VALUES (4, '加班多日汇总', 2, '加班管理', 2, 'empty.jpg', '#/admin/addjobrecord', '2020-06-23 15:41:05');
+INSERT INTO `t_page_admin` VALUES (1, '员工管理', 1, '员工管理', 1, 'empty.jpg', '#/user/user', '2020-06-20 18:26:29');
+INSERT INTO `t_page_admin` VALUES (2, '管理员管理', 2, '员工管理', 1, 'empty.jpg', '#/user/admin', '2020-06-23 15:38:12');
+INSERT INTO `t_page_admin` VALUES (3, '加班单日统计', 1, '加班管理', 2, 'empty.jpg', '#/addjob/addjobrecord', '2020-06-20 18:26:29');
+INSERT INTO `t_page_admin` VALUES (4, '加班多日汇总', 2, '加班管理', 2, 'empty.jpg', '#/addjob/addjobstatistic', '2020-06-23 15:41:05');
 INSERT INTO `t_page_admin` VALUES (5, '生产计划', 1, '车间生产', 3, 'empty.jpg', '#/produce/plan', '2020-06-20 18:26:29');
 
 -- ----------------------------
@@ -246,10 +256,8 @@ CREATE TABLE `t_page_app`  (
 -- ----------------------------
 -- Records of t_page_app
 -- ----------------------------
-INSERT INTO `t_page_app` VALUES (1, '加班统计', 1, '管理', 1, 'empty.jpg', '/pages/modules/addjob/addjob/addjob', '2020-06-20 18:26:29');
+INSERT INTO `t_page_app` VALUES (1, '加班统计', 1, '管理', 1, 'addjobstatistic.png', '/pages/modules/addjob/addjobstatistic/addjobstatistic', '2020-06-20 18:26:29');
 INSERT INTO `t_page_app` VALUES (2, '生产计划', 1, '车间生产', 2, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
-INSERT INTO `t_page_app` VALUES (3, '加班汇总', 2, '管理', 1, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
-INSERT INTO `t_page_app` VALUES (4, '加班单人', 3, '管理', 1, 'empty.jpg', '/pages/modules/produce/plan/plan', '2020-06-20 18:26:29');
 
 -- ----------------------------
 -- Table structure for t_user
@@ -263,7 +271,7 @@ CREATE TABLE `t_user`  (
   `state` int(1) NULL DEFAULT NULL,
   `systime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of t_user

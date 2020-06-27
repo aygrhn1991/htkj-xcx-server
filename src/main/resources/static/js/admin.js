@@ -13,6 +13,10 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/addjob/addjobrecord',
             controller: 'addJobRecordCtrl'
         })
+        .when('/addjob/addjobstatistic', {
+            templateUrl: '/admin/addjob/addjobstatistic',
+            controller: 'addJobStatisticCtrl'
+        })
         .when('/produce/plan', {
             templateUrl: '/admin/produce/plan',
             controller: 'planCtrl'
@@ -34,25 +38,17 @@ app.run(function ($rootScope, $http, $location) {
             $rootScope.admin = data.data.admin;
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
             $rootScope.menu = [];
-            var pages = data.data.page;
-            pages.sort(function (x, y) {
-                return x.group_sort - y.group_sort;
-            });
             var set = new Set();
-            pages.forEach(function (x) {
+            data.data.page.forEach(function (x) {
                 set.add(x.group_name);
             });
-            var group = Array.from(set);
-            group.forEach(function (x) {
+            Array.from(set).forEach(function (x) {
                 var menu = {name: x, select: false, pages: []};
-                pages.forEach(function (y) {
+                data.data.page.forEach(function (y) {
                     if (y.group_name == x) {
                         menu.pages.push(y);
                     }
                 })
-                menu.pages.sort(function (x, y) {
-                    return x.sort - y.sort;
-                });
                 $rootScope.menu.push(menu);
             })
             layui.use('element', function () {
@@ -190,6 +186,38 @@ app.controller('adminCtrl', function ($scope, $http) {
             $scope.user = data.data;
         });
     };
+    $scope.getPage = function () {
+        $http.post('/api/common/getPage').success(function (data) {
+            $scope.pageApp = [];
+            var set = new Set();
+            data.data.app.forEach(function (x) {
+                set.add(x.group_name);
+            });
+            Array.from(set).forEach(function (x) {
+                var menu = {name: x, select: false, pages: []};
+                data.data.app.forEach(function (y) {
+                    if (y.group_name == x) {
+                        menu.pages.push(y);
+                    }
+                })
+                $scope.pageApp.push(menu);
+            });
+            $scope.pageAdmin = [];
+            var set = new Set();
+            data.data.admin.forEach(function (x) {
+                set.add(x.group_name);
+            });
+            Array.from(set).forEach(function (x) {
+                var menu = {name: x, select: false, pages: []};
+                data.data.admin.forEach(function (y) {
+                    if (y.group_name == x) {
+                        menu.pages.push(y);
+                    }
+                })
+                $scope.pageAdmin.push(menu);
+            });
+        });
+    };
     $scope.get = function () {
         $scope.search.loading = layer.load();
         $http.post('/api/getAdmin', $scope.search).success(function (data) {
@@ -199,33 +227,34 @@ app.controller('adminCtrl', function ($scope, $http) {
         });
     };
     $scope.showAddModal = function () {
-        $scope.m = {
-            id: 1, name: 'a'
-        }
+        $scope.lock = false;
+        $scope.model = window.Util.copyObject($scope.pageModel);
         $scope.index = layer.open({
+            title: '添加管理员',
             type: 1,
             content: $('#modal'),
             shade: 0,
-            title: 'add',
             area: '600px',
-            maxHeight: 450,
+            maxHeight: 500,
             move: false,
+            resize: false,
         });
     };
-    $scope.showEditModal = function () {
-        $scope.m.id = 2;
-        $scope.m.name = 'b';
+    $scope.showEditModal = function (e) {
+        $scope.lock = true;
+        $scope.model = e;
         $scope.index = layer.open({
+            title: '修改管理员权限',
             type: 1,
             content: $('#modal'),
             shade: 0,
-            title: 'edit',
-            success: function (layero) {
-
-            }
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
         });
     };
-    $scope.close = function () {
+    $scope.closeModal = function () {
         layer.close($scope.index);
     };
     $scope.delete = function (e) {
@@ -267,7 +296,7 @@ app.controller('adminCtrl', function ($scope, $http) {
     };
     $scope.pageModel = {
         userid: null,
-        pageid: []
+        pageId: []
     };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
@@ -276,6 +305,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         $scope.model = window.Util.copyObject($scope.pageModel);
         $scope.getDepartment();
         $scope.getUser();
+        $scope.getPage();
         $scope.get();
     };
     $scope.reset();
@@ -335,7 +365,6 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         });
     };
     $scope.reset = function () {
-        $scope.loading = null;
         $scope.search = window.Util.getSearchObject();
         $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
         $http.post('/api/getAddJobRecordAllDate').success(function (data) {
@@ -355,6 +384,8 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         $scope.get();
     };
     $scope.reset();
+});
+app.controller('addJobStatisticCtrl', function ($scope, $http) {
 });
 app.controller('planCtrl', function ($scope, $http) {
 });

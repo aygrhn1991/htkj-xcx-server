@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,4 +40,18 @@ public class ApiCommonCtrl {
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("员工列表", list);
     }
+
+    @RequestMapping("/getPage")
+    @ResponseBody
+    public Result getPage() {
+        Map map = new HashMap();
+        String sql = String.format("select t.* from t_page_app t order by t.group_sort,t.sort");
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
+        map.put("app", list);
+        sql = String.format("select t.* from t_page_admin t order by t.group_sort,t.sort");
+        list = this.jdbc.queryForList(sql);
+        map.put("admin", list);
+        return R.success("所有页面", map);
+    }
+
 }

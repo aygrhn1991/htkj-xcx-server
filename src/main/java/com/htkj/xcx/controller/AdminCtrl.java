@@ -50,11 +50,6 @@ public class AdminCtrl {
     }
 
     //region 登录
-    @RequestMapping("/login")
-    public String login() {
-        return "admin/login";
-    }
-
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result doLogin(@RequestBody Admin model) {
@@ -80,7 +75,7 @@ public class AdminCtrl {
         String sql = "select t.*,t1.name user_name,t2.name department_name from t_admin t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.userid=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
         map.put("admin", list.get(0));
-        sql = "select t1.* from t_admin_page t left join t_page t1 on t.page_id=t1.id where t.userid=? order by t1.group_sort,t1.sort";
+        sql = "select t1.* from t_admin_page_admin t left join t_page_admin t1 on t.page_id=t1.id where t.userid=? order by t1.group_sort,t1.sort";
         list = this.jdbc.queryForList(sql, userid);
         map.put("page", list);
         return R.success("管理员信息与授权页面", map);
@@ -88,6 +83,11 @@ public class AdminCtrl {
     //endregion
 
     //region 页面
+    @RequestMapping("/login")
+    public String login() {
+        return "admin/login";
+    }
+
     @RequestMapping("/index")
     public String index() {
         return "admin/index";
@@ -108,9 +108,9 @@ public class AdminCtrl {
         return "admin/user/admin";
     }
 
-    @RequestMapping("/admin/addjobrecord")
+    @RequestMapping("/addjob/addjobrecord")
     public String addjobrecord() {
-        return "admin/admin/addjobrecord";
+        return "admin/addjob/addjobrecord";
     }
 
     @RequestMapping("/produce/plan")

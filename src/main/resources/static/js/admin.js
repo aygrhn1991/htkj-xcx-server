@@ -9,8 +9,8 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/user/admin',
             controller: 'adminCtrl'
         })
-        .when('/admin/addjobrecord', {
-            templateUrl: '/admin/admin/addjobrecord',
+        .when('/addjob/addjobrecord', {
+            templateUrl: '/admin/addjob/addjobrecord',
             controller: 'addJobRecordCtrl'
         })
         .when('/produce/plan', {
@@ -28,27 +28,6 @@ app.config(function ($routeProvider) {
         });
 });
 app.run(function ($rootScope, $http, $location) {
-    var adminPage = [{
-        id: -1,
-        name: '员工管理',
-        sort: 1,
-        group_name: '员工管理',
-        group_sort: 0,
-        image: 'empty.jpg',
-        path_admin: '#/user/user',
-        path_app: null,
-        systime: null
-    }, {
-        id: -2,
-        name: '账号管理',
-        sort: 2,
-        group_name: '员工管理',
-        group_sort: 0,
-        image: 'empty.jpg',
-        path_admin: '#/user/admin',
-        path_app: null,
-        systime: null
-    }];
     var systemPage = ['#/welcome', '#/password'];
     $rootScope.getAdmin = function () {
         $http.post('/admin/getAdminAndPage').success(function (data) {
@@ -56,11 +35,6 @@ app.run(function ($rootScope, $http, $location) {
             window.Util.setCookie('admin', JSON.stringify(data.data.admin));
             $rootScope.menu = [];
             var pages = data.data.page;
-            if ($rootScope.admin.userid == 12159 || $rootScope.admin.userid == 12155) {
-                adminPage.forEach(function (x) {
-                    pages.push(x);
-                })
-            }
             pages.sort(function (x, y) {
                 return x.group_sort - y.group_sort;
             });
@@ -100,7 +74,7 @@ app.run(function ($rootScope, $http, $location) {
             x.select = false;
             x.pages.forEach(function (y) {
                 y.select = false;
-                if (y.path_admin == path) {
+                if (y.path == path) {
                     y.select = true;
                     x.select = true;
                     hasPage = true;

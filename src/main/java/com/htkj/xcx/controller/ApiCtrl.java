@@ -148,6 +148,7 @@ public class ApiCtrl {
     }
 
     //小程序-管理员按日查看加班记录(不分页)
+    //后台-管理员查看加班记录，统计总加班人数、用餐、乘车等
     @RequestMapping("/getAddJobRecordOfDateWithoutPage/{date}")
     @ResponseBody
     public Result getAddJobRecordOfDateWithoutPage(@PathVariable String date) {
@@ -167,7 +168,7 @@ public class ApiCtrl {
         return R.success("加班申报记录(分页)", count, list);
     }
 
-
+    //后台-管理员查看加班记录，日历标记有加班的日期
     @RequestMapping("/getAddJobRecordAllDate")
     @ResponseBody
     public Result getAddJobRecordAllDate() {

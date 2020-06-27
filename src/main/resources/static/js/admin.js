@@ -283,32 +283,36 @@ app.controller('adminCtrl', function ($scope, $http) {
 app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.get = function () {
         $scope.search.loading = layer.load();
-        $http.post('/api/getAddJobRecord', $scope.search).success(function (data) {
+        $http.post('/api/getAddJobRecordOfDate', $scope.search).success(function (data) {
             layer.close($scope.search.loading);
             $scope.data = data.data;
             $scope.makePage(data);
         });
-        $http.post('/api/getAddJobRecordOneDay/' + $scope.search.string1).success(function (data) {
+        $http.post(`/api/getAddJobRecordOfDateWithoutPage/${$scope.search.string1}`).success(function (data) {
             $scope.statistic = {
                 userCount: 0,
                 meal1Count: 0,
                 meal2Count: 0,
                 bus1Count: 0,
                 bus2Count: 0,
+                busToCount: 0,
             };
             data.data.forEach(function (x) {
                 $scope.statistic.userCount++;
-                if (x.meal_time == 1 || x.meal_time == 3) {
+                if (x.meal == 1 && (x.meal_time == 1 || x.meal_time == 3)) {
                     $scope.statistic.meal1Count++;
                 }
-                if (x.meal_time == 2 || x.meal_time == 3) {
+                if (x.meal == 1 && (x.meal_time == 2 || x.meal_time == 3)) {
                     $scope.statistic.meal2Count++;
                 }
-                if (x.bus_time == 1) {
+                if (x.bus == 1 && (x.bus_time == 1)) {
                     $scope.statistic.bus1Count++;
                 }
-                if (x.bus_time == 2) {
+                if (x.bus == 1 && (x.bus_time == 2)) {
                     $scope.statistic.bus2Count++;
+                }
+                if (x.bus_to == 1) {
+                    $scope.statistic.busToCount++;
                 }
             })
         });

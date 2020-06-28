@@ -176,5 +176,16 @@ public class ApiCtrl {
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("所有有加班记录的日期", list);
     }
+
+    //后台-管理员按日期范围查看整合加班记录(分页)
+    @RequestMapping("/getAddJobRecordOfDateRange")
+    @ResponseBody
+    public Result getAddJobRecordOfDateRange(@RequestBody Search model) {
+        String sql = "select t.userid,t1.name user_name,group_concat(date_format(t.date,'%m-%d') order by t.date separator ' , ') dates from t_add_job_record t left join t_user t1 on t.userid=t1.id where t.date>=? adn t.date<=? group by t.userid limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.string1, model.string2);
+        sql = "select count(distinct t.userid) from t_add_job_record t where t.date>=? adn t.date<=?";
+        int count = this.jdbc.queryForObject(sql, Integer.class, model.string1, model.string2);
+        return R.success("加班申报记录整合(分页)", count, list);
+    }
     //endregion
 }

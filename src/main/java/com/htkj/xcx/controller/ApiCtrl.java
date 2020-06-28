@@ -181,9 +181,9 @@ public class ApiCtrl {
     @RequestMapping("/getAddJobRecordOfDateRange")
     @ResponseBody
     public Result getAddJobRecordOfDateRange(@RequestBody Search model) {
-        String sql = "select t.userid,t1.name user_name,group_concat(date_format(t.date,'%m-%d') order by t.date separator ' , ') dates from t_add_job_record t left join t_user t1 on t.userid=t1.id where t.date>=? adn t.date<=? group by t.userid limit " + UtilPage.getPage(model);
+        String sql = "select t.userid,t1.name user_name,t2.name department_name,group_concat(date_format(t.date,'%m-%d') order by t.date separator ' , ') dates from t_add_job_record t left join t_user t1 on t.userid=t1.id left join t_department t2 on t1.department_id=t2.id where t.date>=? and t.date<=? group by t.userid limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, model.string1, model.string2);
-        sql = "select count(distinct t.userid) from t_add_job_record t where t.date>=? adn t.date<=?";
+        sql = "select count(distinct t.userid) from t_add_job_record t where t.date>=? and t.date<=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.string1, model.string2);
         return R.success("加班申报记录整合(分页)", count, list);
     }

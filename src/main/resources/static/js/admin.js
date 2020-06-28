@@ -386,6 +386,49 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
     $scope.reset();
 });
 app.controller('addJobStatisticCtrl', function ($scope, $http) {
+    $scope.get = function () {
+        $scope.search.loading = layer.load();
+        $http.post('/api/getAddJobRecordOfDateRange', $scope.search).success(function (data) {
+            layer.close($scope.search.loading);
+            $scope.statistic = {userCount: 0};
+            $scope.data = data.data;
+            $scope.statistic.userCount = data.count;
+            $scope.makePage(data);
+        });
+    };
+    $scope.makePage = function (data) {
+        layui.laypage.render({
+            elem: 'page',
+            count: data.count,
+            curr: $scope.search.page,
+            limit: $scope.search.limit,
+            limits: [10, 20, 30, 40, 50],
+            layout: ['prev', 'page', 'next', 'count', 'limit'],
+            jump: function (obj, first) {
+                $scope.search.page = obj.curr;
+                $scope.search.limit = obj.limit;
+                if (!first) {
+                    $scope.get();
+                }
+            }
+        });
+    };
+    $scope.reset = function () {
+        $scope.search = window.Util.getSearchObject();
+        $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
+        $scope.search.string2 = window.Util.dateToYYYYMMDD(new Date());
+        layui.laydate.render({
+            elem: '#date',
+            range: true,
+            value: $scope.search.string1 + ' - ' + $scope.search.string2,
+            done: function (value, date, endDate) {
+                $scope.search.string1 = value.split(' - ')[0];
+                $scope.search.string2 = value.split(' - ')[1];
+            }
+        });
+        $scope.get();
+    };
+    $scope.reset();
 });
 app.controller('planCtrl', function ($scope, $http) {
 });

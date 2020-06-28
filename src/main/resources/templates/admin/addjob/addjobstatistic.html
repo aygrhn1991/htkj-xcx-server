@@ -21,38 +21,24 @@
 </form>
 <div class="statistic">
     <strong>统计：</strong>
-    <span>加班<span ng-bind="statistic.userCount"></span>人，</span>
+    <span>加班<span ng-bind="statistic.userCount"></span>人</span>
 </div>
 <hr>
 <table class="layui-table">
     <thead>
     <tr>
-        <th>ID</th>
+        <th>员工工号</th>
         <th>申请人</th>
         <th>申请人部门</th>
         <th>加班时间</th>
-        <th>用餐</th>
-        <th>早车</th>
-        <th>晚车</th>
-        <th>申报时间</th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="d in data">
-        <td ng-bind="d.id"></td>
+        <td ng-bind="d.userid"></td>
         <td ng-bind="d.user_name"></td>
         <td ng-bind="d.department_name"></td>
-        <td ng-bind="d.date"></td>
-        <td>
-            <span ng-if="d.meal==1"><span ng-bind="d.meal_time==1?'午餐':d.meal_time==2?'晚餐':'午餐,晚餐'"></span></span>
-        </td>
-        <td>
-            <span ng-if="d.bus_to==1">08:00</span>
-        </td>
-        <td>
-            <span ng-if="d.bus==1"><span ng-bind="d.bus_time==1?'16:30':'19:30'"></span></span>
-        </td>
-        <td ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></td>
+        <td ng-bind="d.dates"></td>
     </tr>
     </tbody>
 </table>

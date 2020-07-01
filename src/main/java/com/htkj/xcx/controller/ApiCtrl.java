@@ -134,7 +134,7 @@ public class ApiCtrl {
         return R.success("管理员权限授权成功", count);
     }
 
-    //后台-管理员修改管理员权限，获取管理员已授权权限
+    //后台-管理员修改管理员授权页面，获取管理员已授权页面
     @RequestMapping("/getAdminPage/{userid}")
     @ResponseBody
     public Result getAdminPage(@PathVariable String userid) {
@@ -145,10 +145,10 @@ public class ApiCtrl {
         sql = "select t.* from t_admin_page_admin t where t.userid=?";
         list = this.jdbc.queryForList(sql, userid);
         map.put("admin", list);
-        return R.success("管理员已授权权限", map);
+        return R.success("管理员已授权页面", map);
     }
 
-    //后台-管理员修改管理员权限
+    //后台-管理员修改管理员授权页面
     @RequestMapping("/updateAdminPage")
     @ResponseBody
     public Result updateAdminPage(@RequestBody AdminPageModel model) {
@@ -164,7 +164,7 @@ public class ApiCtrl {
             sql = "insert into t_admin_page_app(userid,page_id) values(?,?)";
             count = this.jdbc.update(sql, model.userid, id);
         }
-        return R.success("管理员权限更改成功", count);
+        return R.success("管理员授权页面更改成功", count);
     }
 
     //后台-管理员删除管理员账号

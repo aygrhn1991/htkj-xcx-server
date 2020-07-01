@@ -70,10 +70,10 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">权限(小程序)</label>
                 <div class="layui-input-block">
-                    <div class="layui-row" ng-repeat="d in pageApp">
+                    <div class="layui-row" ng-repeat="d in appPage">
                         <div class="layui-col-xs12"><strong ng-bind="d.name"></strong></div>
                         <div class="layui-col-xs3 layui-col-xs-offset1" ng-repeat="p in d.pages">
-                            <input type="checkbox" ng-checked="p.select"><span ng-bind="p.name"></span>
+                            <input type="checkbox" ng-model="p.select"><span ng-bind="p.name"></span>
                         </div>
                     </div>
                 </div>
@@ -81,17 +81,17 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">权限(后台)</label>
                 <div class="layui-input-block">
-                    <div class="layui-row" ng-repeat="d in pageAdmin">
+                    <div class="layui-row" ng-repeat="d in adminPage">
                         <div class="layui-col-xs12"><strong ng-bind="d.name"></strong></div>
                         <div class="layui-col-xs3 layui-col-xs-offset1" ng-repeat="p in d.pages">
-                            <input type="checkbox" ng-checked="p.select"><span ng-bind="p.name"></span>
+                            <input type="checkbox" ng-model="p.select"><span ng-bind="p.name"></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn">保存</button>
+                    <button class="layui-btn" ng-click="add()">保存</button>
                     <button class="layui-btn layui-btn-primary" ng-click="closeModal()">取消</button>
                 </div>
             </div>

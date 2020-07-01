@@ -1,6 +1,8 @@
 package com.htkj.xcx.controller;
 
 import com.htkj.xcx.model.AddJobRecord;
+import com.htkj.xcx.model.UserState;
+import com.htkj.xcx.model.param.AdminPageModel;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
@@ -29,7 +31,8 @@ public class ApiCtrl {
         return R.success("ok", message);
     }
 
-    //region 员工审核(后台管理)
+    //region 员工
+    //后台-管理员查看员工列表
     @RequestMapping("/getUser")
     @ResponseBody
     public Result getUser(@RequestBody Search model) {
@@ -56,6 +59,7 @@ public class ApiCtrl {
         return R.success("员工列表", count, list);
     }
 
+    //后台-管理员拒绝员工的认证申请
     @RequestMapping("/deleteUser/{userid}")
     @ResponseBody
     public Result deleteUser(@PathVariable int userid) {
@@ -64,6 +68,7 @@ public class ApiCtrl {
         return R.success("员工申请已拒绝");
     }
 
+    //后台-管理员修改员工账号状态
     @RequestMapping("/updateUserState/{userid}/{state}")
     @ResponseBody
     public Result updateUserState(@PathVariable int userid, @PathVariable int state) {
@@ -73,7 +78,8 @@ public class ApiCtrl {
     }
     //endregion
 
-    //region 管理员账号管理(后台管理)
+    //region 管理员账号
+    //后台-管理员查看管理员账号
     @RequestMapping("/getAdmin")
     @ResponseBody
     public Result getAdmin(@RequestBody Search model) {
@@ -100,6 +106,33 @@ public class ApiCtrl {
         return R.success("管理员列表", count, list);
     }
 
+    //后台-管理员添加管理员账号
+    @RequestMapping("/addAdmin")
+    @ResponseBody
+    public Result addAdmin(@RequestBody AdminPageModel model) {
+        String sql = "select count(*) from t_admin t where t.userid=?";
+        int count = this.jdbc.queryForObject(sql, Integer.class, model.userid);
+        if (count >= 1) {
+            return R.error("该员工已授权过管理员权限");
+        }
+        sql = "insert into t_admin(userid,password,state,systime) values(?,'123456',?,now())";
+        count = this.jdbc.update(sql, model.userid, UserState.active.ordinal());
+        sql = "delete from t_admin_page_admin where userid=?";
+        count = this.jdbc.update(sql, model.userid);
+        for (int id : model.adminIds) {
+            sql = "insert into t_admin_page_admin(userid,page_id) values(?,?)";
+            count = this.jdbc.update(sql, model.userid, id);
+        }
+        sql = "delete from t_admin_page_app where userid=?";
+        count = this.jdbc.update(sql, model.userid);
+        for (int id : model.appIds) {
+            sql = "insert into t_admin_page_app(userid,page_id) values(?,?)";
+            count = this.jdbc.update(sql, model.userid, id);
+        }
+        return R.success("管理员权限授权成功", count);
+    }
+
+    //后台-管理员删除管理员账号
     @RequestMapping("/deleteAdmin/{userid}")
     @ResponseBody
     public Result deleteAdmin(@PathVariable int userid) {
@@ -108,6 +141,7 @@ public class ApiCtrl {
         return R.success("管理员账号已删除");
     }
 
+    //后台-管理员修改管理员账号状态
     @RequestMapping("/updateAdminState/{userid}/{state}")
     @ResponseBody
     public Result updateAdminState(@PathVariable int userid, @PathVariable int state) {

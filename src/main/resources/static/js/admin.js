@@ -188,7 +188,7 @@ app.controller('adminCtrl', function ($scope, $http) {
     };
     $scope.getPage = function () {
         $http.post('/api/common/getPage').success(function (data) {
-            $scope.pageApp = [];
+            $scope.appPage = [];
             var set = new Set();
             data.data.app.forEach(function (x) {
                 set.add(x.group_name);
@@ -200,9 +200,9 @@ app.controller('adminCtrl', function ($scope, $http) {
                         menu.pages.push(y);
                     }
                 })
-                $scope.pageApp.push(menu);
+                $scope.appPage.push(menu);
             });
-            $scope.pageAdmin = [];
+            $scope.adminPage = [];
             var set = new Set();
             data.data.admin.forEach(function (x) {
                 set.add(x.group_name);
@@ -214,7 +214,7 @@ app.controller('adminCtrl', function ($scope, $http) {
                         menu.pages.push(y);
                     }
                 })
-                $scope.pageAdmin.push(menu);
+                $scope.adminPage.push(menu);
             });
         });
     };
@@ -229,6 +229,16 @@ app.controller('adminCtrl', function ($scope, $http) {
     $scope.showAddModal = function () {
         $scope.lock = false;
         $scope.model = window.Util.copyObject($scope.pageModel);
+        $scope.adminPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                y.select = false;
+            })
+        })
+        $scope.appPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                y.select = false;
+            })
+        })
         $scope.index = layer.open({
             title: '添加管理员',
             type: 1,
@@ -238,6 +248,39 @@ app.controller('adminCtrl', function ($scope, $http) {
             maxHeight: 500,
             move: false,
             resize: false,
+        });
+    };
+    $scope.add = function () {
+        if (window.Util.isNull($scope.model.userid)) {
+            layer.msg('请选择一名员工');
+            return;
+        }
+        var appIds = [];
+        $scope.appPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    appIds.push(y.id);
+                }
+            })
+        });
+        var adminIds = [];
+        $scope.adminPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    adminIds.push(y.id);
+                }
+            })
+        });
+        $http.post('/api/addAdmin', {
+            userid: $scope.model.userid,
+            adminIds: adminIds,
+            appIds: appIds
+        }).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
         });
     };
     $scope.showEditModal = function (e) {
@@ -296,7 +339,8 @@ app.controller('adminCtrl', function ($scope, $http) {
     };
     $scope.pageModel = {
         userid: null,
-        pageId: []
+        adminIds: [],
+        appIds: [],
     };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();

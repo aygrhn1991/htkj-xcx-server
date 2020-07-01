@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,6 +134,39 @@ public class ApiCtrl {
         return R.success("管理员权限授权成功", count);
     }
 
+    //后台-管理员修改管理员权限，获取管理员已授权权限
+    @RequestMapping("/getAdminPage/{userid}")
+    @ResponseBody
+    public Result getPageOfAdmin(@PathVariable String userid) {
+        Map map = new HashMap();
+        String sql = "select t.* from t_admin_page_app t where t.userid=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
+        map.put("app", list);
+        sql = "select t.* from t_admin_page_admin t where t.userid=?";
+        list = this.jdbc.queryForList(sql, userid);
+        map.put("admin", list);
+        return R.success("管理员已授权权限ID", map);
+    }
+
+    //后台-管理员添加管理员账号
+    @RequestMapping("/updateAdminPage")
+    @ResponseBody
+    public Result updateAdminPage(@RequestBody AdminPageModel model) {
+        String sql = "delete from t_admin_page_admin where userid=?";
+        int count = this.jdbc.update(sql, model.userid);
+        for (int id : model.adminIds) {
+            sql = "insert into t_admin_page_admin(userid,page_id) values(?,?)";
+            count = this.jdbc.update(sql, model.userid, id);
+        }
+        sql = "delete from t_admin_page_app where userid=?";
+        count = this.jdbc.update(sql, model.userid);
+        for (int id : model.appIds) {
+            sql = "insert into t_admin_page_app(userid,page_id) values(?,?)";
+            count = this.jdbc.update(sql, model.userid, id);
+        }
+        return R.success("管理员权限更改成功", count);
+    }
+
     //后台-管理员删除管理员账号
     @RequestMapping("/deleteAdmin/{userid}")
     @ResponseBody
@@ -148,6 +183,29 @@ public class ApiCtrl {
         String sql = "update t_admin t set t.state=? where t.userid=?";
         int count = this.jdbc.update(sql, state, userid);
         return R.success("管理员账号状态更新成功");
+    }
+
+    //后台-管理员重置管理员登录密码
+    @RequestMapping("/resetAdminPassword/{userid}")
+    @ResponseBody
+    public Result resetAdminPassword(@PathVariable int userid) {
+        String sql = "update t_admin t set t.password=? where t.userid=?";
+        int count = this.jdbc.update(sql, "123456", userid);
+        return R.success("管理员登录密码已重置");
+    }
+
+    //后台-管理员修改管理员登录密码
+    @RequestMapping("/updateAdminPassword/{userid}/{oldpassword}/{newpassword}")
+    @ResponseBody
+    public Result updateAdminPassword(@PathVariable int userid, @PathVariable String oldpassword, @PathVariable String newpassword) {
+        String sql = "select t.* from t_admin t where t.userid=?";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
+        if (!list.get(0).get("password").toString().equals(oldpassword)) {
+            return R.error("旧密码错误");
+        }
+        sql = "update t_admin t set t.password=? where t.userid=?";
+        int count = this.jdbc.update(sql, newpassword, userid);
+        return R.success("登录密码修改成功");
     }
     //endregion
 

@@ -284,6 +284,30 @@ app.controller('adminCtrl', function ($scope, $http) {
         });
     };
     $scope.showEditModal = function (e) {
+        $http.post(`/api/getPageOfAdmin/${e.userid}`).success(function (data) {
+            $scope.appPage.forEach(function (x) {
+                x.pages.forEach(function (y) {
+                    if (data.data.app.filter(function (z) {
+                        return z.page_id == y.id
+                    }).length != 0) {
+                        y.select = true;
+                    } else {
+                        y.select = false;
+                    }
+                })
+            })
+            $scope.adminPage.forEach(function (x) {
+                x.pages.forEach(function (y) {
+                    if (data.data.admin.filter(function (z) {
+                        return z.page_id == y.id
+                    }).length != 0) {
+                        y.select = true;
+                    } else {
+                        y.select = false;
+                    }
+                })
+            })
+        });
         $scope.lock = true;
         $scope.model = e;
         $scope.index = layer.open({

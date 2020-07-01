@@ -51,7 +51,7 @@
             <button class="layui-btn layui-btn-xs" ng-if="d.state==2" ng-click="editState(d,3)">禁用</button>
             <button class="layui-btn layui-btn-xs" ng-if="d.state==3" ng-click="editState(d,2)">启用</button>
             <button class="layui-btn layui-btn-xs" ng-click="showEditModal(d)">权限</button>
-            <button class="layui-btn layui-btn-xs">重置密码</button>
+            <button class="layui-btn layui-btn-xs" ng-click="resetPassword(d)">重置密码</button>
             <button class="layui-btn layui-btn-xs" ng-click="delete(d)">删除</button>
         </td>
     </tr>
@@ -91,7 +91,8 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" ng-click="add()">保存</button>
+                    <button class="layui-btn" ng-if="!lock" ng-click="add()">保存</button>
+                    <button class="layui-btn" ng-if="lock" ng-click="edit()">保存</button>
                     <button class="layui-btn layui-btn-primary" ng-click="closeModal()">取消</button>
                 </div>
             </div>

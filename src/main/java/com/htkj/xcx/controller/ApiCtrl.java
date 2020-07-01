@@ -137,7 +137,7 @@ public class ApiCtrl {
     //后台-管理员修改管理员权限，获取管理员已授权权限
     @RequestMapping("/getAdminPage/{userid}")
     @ResponseBody
-    public Result getPageOfAdmin(@PathVariable String userid) {
+    public Result getAdminPage(@PathVariable String userid) {
         Map map = new HashMap();
         String sql = "select t.* from t_admin_page_app t where t.userid=?";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
@@ -145,10 +145,10 @@ public class ApiCtrl {
         sql = "select t.* from t_admin_page_admin t where t.userid=?";
         list = this.jdbc.queryForList(sql, userid);
         map.put("admin", list);
-        return R.success("管理员已授权权限ID", map);
+        return R.success("管理员已授权权限", map);
     }
 
-    //后台-管理员添加管理员账号
+    //后台-管理员修改管理员权限
     @RequestMapping("/updateAdminPage")
     @ResponseBody
     public Result updateAdminPage(@RequestBody AdminPageModel model) {
@@ -173,6 +173,10 @@ public class ApiCtrl {
     public Result deleteAdmin(@PathVariable int userid) {
         String sql = "delete from t_admin where userid=?";
         int count = this.jdbc.update(sql, userid);
+        sql = "delete from t_admin_page_app where userid=?";
+        count = this.jdbc.update(sql, userid);
+        sql = "delete from t_admin_page_admin where userid=?";
+        count = this.jdbc.update(sql, userid);
         return R.success("管理员账号已删除");
     }
 
@@ -185,27 +189,26 @@ public class ApiCtrl {
         return R.success("管理员账号状态更新成功");
     }
 
-    //后台-管理员重置管理员登录密码
-    @RequestMapping("/resetAdminPassword/{userid}")
+    //后台-管理员重置/更新管理员登录密码
+    @RequestMapping("/updateAdminPassword/{type}/{userid}/{newpassword}/{oldpassword}")
     @ResponseBody
-    public Result resetAdminPassword(@PathVariable int userid) {
-        String sql = "update t_admin t set t.password=? where t.userid=?";
-        int count = this.jdbc.update(sql, "123456", userid);
-        return R.success("管理员登录密码已重置");
-    }
-
-    //后台-管理员修改管理员登录密码
-    @RequestMapping("/updateAdminPassword/{userid}/{oldpassword}/{newpassword}")
-    @ResponseBody
-    public Result updateAdminPassword(@PathVariable int userid, @PathVariable String oldpassword, @PathVariable String newpassword) {
-        String sql = "select t.* from t_admin t where t.userid=?";
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
-        if (!list.get(0).get("password").toString().equals(oldpassword)) {
-            return R.error("旧密码错误");
+    public Result updateAdminPassword(@PathVariable int type, @PathVariable int userid, @PathVariable String newpassword, @PathVariable String oldpassword) {
+        if (type == 1) {
+            String sql = "update t_admin t set t.password=? where t.userid=?";
+            int count = this.jdbc.update(sql, newpassword, userid);
+            return R.success("管理员登录密码已重置");
+        } else if (type == 2) {
+            String sql = "select t.* from t_admin t where t.userid=?";
+            List<Map<String, Object>> list = this.jdbc.queryForList(sql, userid);
+            if (!list.get(0).get("password").toString().equals(oldpassword)) {
+                return R.error("旧密码错误");
+            }
+            sql = "update t_admin t set t.password=? where t.userid=?";
+            int count = this.jdbc.update(sql, newpassword, userid);
+            return R.success("登录密码修改成功");
+        } else {
+            return R.error("访问无效");
         }
-        sql = "update t_admin t set t.password=? where t.userid=?";
-        int count = this.jdbc.update(sql, newpassword, userid);
-        return R.success("登录密码修改成功");
     }
     //endregion
 

@@ -284,7 +284,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         });
     };
     $scope.showEditModal = function (e) {
-        $http.post(`/api/getPageOfAdmin/${e.userid}`).success(function (data) {
+        $http.post(`/api/getAdminPage/${e.userid}`).success(function (data) {
             $scope.appPage.forEach(function (x) {
                 x.pages.forEach(function (y) {
                     if (data.data.app.filter(function (z) {
@@ -321,6 +321,35 @@ app.controller('adminCtrl', function ($scope, $http) {
             resize: false,
         });
     };
+    $scope.edit = function () {
+        var appIds = [];
+        $scope.appPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    appIds.push(y.id);
+                }
+            })
+        });
+        var adminIds = [];
+        $scope.adminPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    adminIds.push(y.id);
+                }
+            })
+        });
+        $http.post('/api/updateAdminPage', {
+            userid: $scope.model.userid,
+            adminIds: adminIds,
+            appIds: appIds
+        }).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
     $scope.closeModal = function () {
         layer.close($scope.index);
     };
@@ -341,6 +370,13 @@ app.controller('adminCtrl', function ($scope, $http) {
                 if (data.success) {
                     $scope.get();
                 }
+            });
+        });
+    };
+    $scope.resetPassword = function (e) {
+        layer.confirm('此操作将重置管理员登录密码', null, function () {
+            $http.post(`/api/updateAdminPassword/1/${e.userid}/123456/-1`).success(function (data) {
+                layer.msg(data.message);
             });
         });
     };

@@ -470,7 +470,7 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
     };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
-        $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
+        $scope.search.string1 = window.Util.dateToYYYYMMDD(window.Util.addDay(new Date(), 1));
         $http.post('/api/getAddJobRecordAllDate').success(function (data) {
             var dateList = {};
             data.data.forEach(function (x) {
@@ -478,7 +478,7 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             })
             layui.laydate.render({
                 elem: '#date',
-                value: $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date()),
+                value: $scope.search.string1 = window.Util.dateToYYYYMMDD(window.Util.addDay(new Date(), 1)),
                 mark: dateList,
                 done: function (value, date, endDate) {
                     $scope.search.string1 = value;

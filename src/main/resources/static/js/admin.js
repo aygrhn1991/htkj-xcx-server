@@ -649,13 +649,13 @@ app.controller('planCtrl', function ($scope, $http) {
                 type: 1,
                 content: $('#modal-step'),
                 shade: 0,
-                area: '600px',
+                area:  ['600px', '500px'],
                 offset: '100px',
                 maxHeight: 500,
                 move: false,
                 resize: false,
             });
-        });
+        })
     };
     $scope.closeModal = function () {
         layer.close($scope.index);

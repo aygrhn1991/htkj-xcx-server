@@ -1,8 +1,8 @@
 package com.htkj.xcx.controller;
 
 import com.htkj.xcx.model.AddJobRecord;
+import com.htkj.xcx.model.Admin;
 import com.htkj.xcx.model.UserState;
-import com.htkj.xcx.model.param.AdminPageModel;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
@@ -111,7 +111,7 @@ public class ApiCtrl {
     //后台-管理员添加管理员账号
     @RequestMapping("/addAdmin")
     @ResponseBody
-    public Result addAdmin(@RequestBody AdminPageModel model) {
+    public Result addAdmin(@RequestBody Admin model) {
         String sql = "select count(*) from t_admin t where t.userid=?";
         int count = this.jdbc.queryForObject(sql, Integer.class, model.userid);
         if (count >= 1) {
@@ -151,7 +151,7 @@ public class ApiCtrl {
     //后台-管理员修改管理员授权页面
     @RequestMapping("/updateAdminPage")
     @ResponseBody
-    public Result updateAdminPage(@RequestBody AdminPageModel model) {
+    public Result updateAdminPage(@RequestBody Admin model) {
         String sql = "delete from t_admin_page_admin where userid=?";
         int count = this.jdbc.update(sql, model.userid);
         for (int id : model.adminIds) {

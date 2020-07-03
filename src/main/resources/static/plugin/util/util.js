@@ -26,6 +26,11 @@ window.Util = {
         var s = (date.getSeconds() >= 10 ? '' : '0') + date.getSeconds();
         return h + ':' + m + ':' + s;
     },
+    dateToHHMM: function (date) {
+        var h = (date.getHours() >= 10 ? '' : '0') + date.getHours();
+        var m = (date.getMinutes() >= 10 ? '' : '0') + date.getMinutes();
+        return h + ':' + m;
+    },
     dateToWeekday: function (date) {
         var days = '日一二三四五六';
         return '星期' + days.charAt(date.getDay());

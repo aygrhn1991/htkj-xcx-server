@@ -1,8 +1,8 @@
 package com.htkj.xcx.controller;
 
-import com.htkj.xcx.model.AddJobRecord;
-import com.htkj.xcx.model.Admin;
-import com.htkj.xcx.model.UserState;
+import com.htkj.xcx.model.*;
+import com.htkj.xcx.model.em.PlanStepEnum;
+import com.htkj.xcx.model.em.UserStateEnum;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +117,7 @@ public class ApiCtrl {
             return R.error("该员工已授权过管理员权限");
         }
         sql = "insert into t_admin(userid,password,state,systime) values(?,'123456',?,now())";
-        count = this.jdbc.update(sql, model.userid, UserState.active.ordinal());
+        count = this.jdbc.update(sql, model.userid, UserStateEnum.active.ordinal());
         sql = "delete from t_admin_page_admin where userid=?";
         count = this.jdbc.update(sql, model.userid);
         for (int id : model.adminIds) {
@@ -131,7 +130,7 @@ public class ApiCtrl {
             sql = "insert into t_admin_page_app(userid,page_id) values(?,?)";
             count = this.jdbc.update(sql, model.userid, id);
         }
-        return R.success("管理员权限授权成功", count);
+        return R.success("管理员权限授权成功");
     }
 
     //后台-管理员修改管理员授权页面，获取管理员已授权页面
@@ -164,7 +163,7 @@ public class ApiCtrl {
             sql = "insert into t_admin_page_app(userid,page_id) values(?,?)";
             count = this.jdbc.update(sql, model.userid, id);
         }
-        return R.success("管理员授权页面更改成功", count);
+        return R.success("管理员授权页面更改成功");
     }
 
     //后台-管理员删除管理员账号
@@ -190,7 +189,7 @@ public class ApiCtrl {
     }
 
     //后台-管理员重置/更新管理员登录密码
-    @RequestMapping("/updateAdminPassword/{type}/{userid}/{newpassword}/{oldpassword}")
+    @RequestMapping({"/updateAdminPassword/{type}/{userid}/{newpassword}", "/updateAdminPassword/{type}/{userid}/{newpassword}/{oldpassword}"})
     @ResponseBody
     public Result updateAdminPassword(@PathVariable int type, @PathVariable int userid, @PathVariable String newpassword, @PathVariable String oldpassword) {
         if (type == 1) {
@@ -221,9 +220,9 @@ public class ApiCtrl {
         if (count >= 1) {
             return R.error("当天已申报加班");
         }
-        sql = "insert into t_add_job_record(userid,date,meal,meal_time,bus,bus_time,bus_to,systime) values(?,?,?,?,?,?,?,now())";
+        sql = "insert into t_add_job_record(userid,`date`,meal,meal_time,bus,bus_time,bus_to,systime) values(?,?,?,?,?,?,?,now())";
         count = this.jdbc.update(sql, model.userid, model.date, model.meal, model.meal_time, model.bus, model.bus_time, model.bus_to);
-        return R.success("申报加班成功", count);
+        return R.success("申报加班成功");
     }
 
     //小程序-员工查看自己加班记录
@@ -239,7 +238,7 @@ public class ApiCtrl {
     public Result deleteAddJobRecord(@PathVariable String id) {
         String sql = "delete from t_add_job_record where id=?";
         int count = this.jdbc.update(sql, id);
-        return R.success("删除加班申报记录");
+        return R.success("加班申报记录已删除");
     }
 
     //小程序-管理员按日查看加班记录(不分页)
@@ -283,4 +282,52 @@ public class ApiCtrl {
         return R.success("加班申报记录整合(分页)", count, list);
     }
     //endregion
+
+    //#region
+    //后台-管理员查看生产计划
+    @RequestMapping("/getPlan")
+    @ResponseBody
+    public Result getPlan(@RequestBody Search model) {
+        String sql1 = "select t.* from t_plan t where t.del=0";
+        String sql2 = "select count(*) from t_plan t where t.del=0";
+        if (!(model.string1 == null || model.string1.isEmpty())) {
+            String and = " and t.model like '%" + model.string1.toUpperCase() + "%' ";
+            sql1 += and;
+            sql2 += and;
+        }
+        sql1 += " order by t.start_date desc,t.systime desc limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
+        int count = this.jdbc.queryForObject(sql2, Integer.class);
+        return R.success("生产计划列表", count, list);
+    }
+
+    //后台-管理员添加生产计划
+    @RequestMapping("/addPlan")
+    @ResponseBody
+    public Result addPlan(@RequestBody Plan model) {
+        String sql = "insert into t_plan(model,`order`,batch,line,card,`count`,start_date,step,mark,del,systime) values(?,?,?,?,?,?,?,?,?,0,now())";
+        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.line, model.card, model.count, model.start_date, PlanStepEnum.unpublish.ordinal(), model.mark);
+        return R.success("生产计划添加成功");
+    }
+
+    //后台-管理员修改生产计划
+    @RequestMapping("/updatePlan")
+    @ResponseBody
+    public Result updatePlan(@RequestBody Plan model) {
+        String sql = "update t_plan t set t.count=?,t.start_date=?,t.mark=? where t.id=?";
+        int count = this.jdbc.update(sql, model.count, model.start_date, model.mark, model.id);
+        return R.success("生产计划修改成功");
+    }
+
+    //后台-管理员更新生产计划进度
+    @RequestMapping("/updatePlanStep")
+    @ResponseBody
+    public Result updatePlanStep(@RequestBody PlanStep model) {
+        String sql = "insert into t_plan_step(plan_id,step,message,systime) values(?,?,?,now())";
+        int count = this.jdbc.update(sql, model.plan_id, model.step, model.message);
+        sql = "update t_plan t set t.step=? where t.id=?";
+        count = this.jdbc.update(sql, model.step, model.plan_id);
+        return R.success("生产计划状态已更新");
+    }
+    //#endregion
 }

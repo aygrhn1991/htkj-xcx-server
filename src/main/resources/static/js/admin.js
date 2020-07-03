@@ -255,27 +255,23 @@ app.controller('adminCtrl', function ($scope, $http) {
             layer.msg('请选择一名员工');
             return;
         }
-        var appIds = [];
+        $scope.model.appIds = [];
         $scope.appPage.forEach(function (x) {
             x.pages.forEach(function (y) {
                 if (y.select == true) {
-                    appIds.push(y.id);
+                    $scope.model.appIds.push(y.id);
                 }
             })
         });
-        var adminIds = [];
+        $scope.model.adminIds = [];
         $scope.adminPage.forEach(function (x) {
             x.pages.forEach(function (y) {
                 if (y.select == true) {
-                    adminIds.push(y.id);
+                    $scope.model.adminIds.push(y.id);
                 }
             })
         });
-        $http.post('/api/addAdmin', {
-            userid: $scope.model.userid,
-            adminIds: adminIds,
-            appIds: appIds
-        }).success(function (data) {
+        $http.post('/api/addAdmin', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -322,27 +318,23 @@ app.controller('adminCtrl', function ($scope, $http) {
         });
     };
     $scope.edit = function () {
-        var appIds = [];
+        $scope.model.appIds = [];
         $scope.appPage.forEach(function (x) {
             x.pages.forEach(function (y) {
                 if (y.select == true) {
-                    appIds.push(y.id);
+                    $scope.model.appIds.push(y.id);
                 }
             })
         });
-        var adminIds = [];
+        $scope.model.adminIds = [];
         $scope.adminPage.forEach(function (x) {
             x.pages.forEach(function (y) {
                 if (y.select == true) {
-                    adminIds.push(y.id);
+                    $scope.model.adminIds.push(y.id);
                 }
             })
         });
-        $http.post('/api/updateAdminPage', {
-            userid: $scope.model.userid,
-            adminIds: adminIds,
-            appIds: appIds
-        }).success(function (data) {
+        $http.post('/api/updateAdminPage', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -375,7 +367,7 @@ app.controller('adminCtrl', function ($scope, $http) {
     };
     $scope.resetPassword = function (e) {
         layer.confirm('此操作将重置管理员登录密码', null, function () {
-            $http.post(`/api/updateAdminPassword/1/${e.userid}/123456/-1`).success(function (data) {
+            $http.post(`/api/updateAdminPassword/1/${e.userid}/123456`).success(function (data) {
                 layer.msg(data.message);
             });
         });
@@ -535,4 +527,182 @@ app.controller('addJobStatisticCtrl', function ($scope, $http) {
     $scope.reset();
 });
 app.controller('planCtrl', function ($scope, $http) {
+    $scope.line = ['D', 'X', 'P'];
+    $scope.get = function () {
+        $scope.search.loading = layer.load();
+        $http.post('/api/getPlan', $scope.search).success(function (data) {
+            layer.close($scope.search.loading);
+            $scope.data = data.data;
+            $scope.makePage(data);
+        });
+    };
+    $scope.showAddModal = function () {
+        $scope.model = window.Util.copyObject($scope.pageModel);
+        layui.laydate.render({
+            elem: '#date',
+            value: $scope.model.start_date = window.Util.dateToYYYYMMDD(new Date()),
+            done: function (value, date, endDate) {
+                $scope.model.start_date = value;
+            }
+        });
+        $scope.index = layer.open({
+            title: '添加生产计划',
+            type: 1,
+            content: $('#modal'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.add = function () {
+        if (window.Util.isNull($scope.model.model) ||
+            window.Util.isNull($scope.model.order) ||
+            window.Util.isNull($scope.model.batch) ||
+            window.Util.isNull($scope.model.line) ||
+            window.Util.isNull($scope.model.card) ||
+            window.Util.isNull($scope.model.count) || $scope.model.count == 0) {
+            layer.msg('请完善生产计划信息');
+            return;
+        }
+        $http.post('/api/addPlan', $scope.model).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
+    $scope.showEditModal = function (e) {
+        $scope.model = e;
+        layui.laydate.render({
+            elem: '#date',
+            value: e.start_date,
+            done: function (value, date, endDate) {
+                $scope.model.start_date = value;
+            }
+        });
+        $scope.index = layer.open({
+            title: '修改生产计划',
+            type: 1,
+            content: $('#modal'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.edit = function () {
+        if (window.Util.isNull($scope.model.count) || $scope.model.count == 0) {
+            layer.msg('请完善生产计划信息');
+            return;
+        }
+        $http.post('/api/updatePlan', $scope.model).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
+    $scope.showStepModal = function (e) {
+        $scope.model = e;
+        $scope.stepModel = {plan_id: e.id, step: null, message: null};
+        $scope.index = layer.open({
+            title: '生产计划进度更新',
+            type: 1,
+            content: $('#modal-step'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.editStep = function (next) {
+        if ($scope.model.step == 0) {
+            $scope.stepModel.step = 1;
+        } else if ($scope.model.step == 1 || $scope.model.step == 10) {
+            $scope.stepModel.step = next ? 2 : 10;
+        } else if ($scope.model.step == 2 || $scope.model.step == 20) {
+            $scope.stepModel.step = next ? 3 : 20;
+        } else if ($scope.model.step == 3) {
+            $scope.stepModel.step = 4;
+        } else {
+            $scope.stepModel.step = null;
+        }
+        $http.post('/api/updatePlanStep', $scope.stepModel).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
+    $scope.closeModal = function () {
+        layer.close($scope.index);
+    };
+    $scope.delete = function (e) {
+        layer.confirm('此操作将删除管理员账号', null, function () {
+            $http.post(`/api/deleteAdmin/${e.userid}`).success(function (data) {
+                layer.msg(data.message);
+                if (data.success) {
+                    $scope.get();
+                }
+            });
+        });
+    };
+    $scope.editState = function (e, state) {
+        layer.confirm('此操作将更改管理员账号状态', null, function () {
+            $http.post(`/api/updateAdminState/${e.userid}/${state}`).success(function (data) {
+                layer.msg(data.message);
+                if (data.success) {
+                    $scope.get();
+                }
+            });
+        });
+    };
+    $scope.resetPassword = function (e) {
+        layer.confirm('此操作将重置管理员登录密码', null, function () {
+            $http.post(`/api/updateAdminPassword/1/${e.userid}/123456/-1`).success(function (data) {
+                layer.msg(data.message);
+            });
+        });
+    };
+    $scope.makePage = function (data) {
+        layui.laypage.render({
+            elem: 'page',
+            count: data.count,
+            curr: $scope.search.page,
+            limit: $scope.search.limit,
+            limits: [10, 20, 30, 40, 50],
+            layout: ['prev', 'page', 'next', 'count', 'limit'],
+            jump: function (obj, first) {
+                $scope.search.page = obj.curr;
+                $scope.search.limit = obj.limit;
+                if (!first) {
+                    $scope.get();
+                }
+            }
+        });
+    };
+    $scope.pageModel = {
+        id: null,
+        model: null,
+        order: null,
+        batch: null,
+        line: null,
+        card: null,
+        count: null,
+        start_date: null,
+        mark: null,
+    };
+    $scope.reset = function () {
+        $scope.search = window.Util.getSearchObject();
+        $scope.model = window.Util.copyObject($scope.pageModel);
+        $scope.get();
+    };
+    $scope.reset();
 });

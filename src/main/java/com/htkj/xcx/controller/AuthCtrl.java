@@ -2,7 +2,7 @@ package com.htkj.xcx.controller;
 
 import com.google.gson.Gson;
 import com.htkj.xcx.model.User;
-import com.htkj.xcx.model.UserState;
+import com.htkj.xcx.model.em.UserStateEnum;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
@@ -42,10 +42,10 @@ public class AuthCtrl {
         List<Map<String, Object>> list = this.jdbc.queryForList(sql, openid);
         if (list.size() == 0) {
             return R.error("员工不存在", openid);
-        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.unauthorized.ordinal()) {
-            return R.error("员工信息审核中", UserState.unauthorized.ordinal());
-        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
-            return R.error("员工账号已禁用", UserState.disabled.ordinal());
+        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserStateEnum.unauthorized.ordinal()) {
+            return R.error("员工信息审核中", UserStateEnum.unauthorized.ordinal());
+        } else if (Integer.parseInt(list.get(0).get("state").toString()) == UserStateEnum.disabled.ordinal()) {
+            return R.error("员工账号已禁用", UserStateEnum.disabled.ordinal());
         } else {
             Map m = new HashMap();
             m.put("user", list.get(0));
@@ -65,7 +65,7 @@ public class AuthCtrl {
         }
         sql = "insert into t_user(id,openid,name,department_id,state,systime) values(?,?,?,?,?,now())";
 //        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.unauthorized.ordinal());
-        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserState.active.ordinal());
+        int count = this.jdbc.update(sql, model.id, model.openid, model.name, model.department_id, UserStateEnum.active.ordinal());
         return R.success("员工认证已提交");
     }
 

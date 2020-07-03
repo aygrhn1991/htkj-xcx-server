@@ -1,6 +1,6 @@
-package com.htkj.xcx.model;
+package com.htkj.xcx.model.em;
 
-public enum UserState {
+public enum UserStateEnum {
     unregister,
     unauthorized,
     active,

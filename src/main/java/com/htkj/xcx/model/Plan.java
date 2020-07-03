@@ -7,11 +7,11 @@ public class Plan {
     public String batch;
     public String line;
     public String card;
-    public int count1;
-    public int count2;
-    public String startdate1;
-    public String startdate2;
+    public int count;
+    public String start_date;
+    public String end_date;
     public int step;
+    public String mark;
     public int del;
     public String systime;
 

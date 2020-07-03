@@ -2,7 +2,7 @@ package com.htkj.xcx.controller;
 
 import com.google.gson.Gson;
 import com.htkj.xcx.model.Admin;
-import com.htkj.xcx.model.UserState;
+import com.htkj.xcx.model.em.UserStateEnum;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class AdminCtrl {
         if (!list.get(0).get("password").toString().equals(model.password)) {
             return R.error("密码错误");
         }
-        if (Integer.parseInt(list.get(0).get("state").toString()) == UserState.disabled.ordinal()) {
+        if (Integer.parseInt(list.get(0).get("state").toString()) == UserStateEnum.disabled.ordinal()) {
             return R.error("管理员账号已禁用");
         }
         return R.success("登录成功", list.get(0));

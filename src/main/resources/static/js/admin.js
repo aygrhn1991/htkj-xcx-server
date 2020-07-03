@@ -607,13 +607,13 @@ app.controller('planCtrl', function ($scope, $http) {
             }
         });
     };
-    $scope.showStepModal = function (e) {
+    $scope.showEditStepModal = function (e) {
         $scope.model = e;
         $scope.stepModel = {plan_id: e.id, step: null, message: null};
         $scope.index = layer.open({
             title: '生产计划进度更新',
             type: 1,
-            content: $('#modal-step'),
+            content: $('#modal-step-edit'),
             shade: 0,
             area: '600px',
             maxHeight: 500,
@@ -639,6 +639,22 @@ app.controller('planCtrl', function ($scope, $http) {
                 $scope.get();
                 $scope.closeModal();
             }
+        });
+    };
+    $scope.showStepModal = function (e) {
+        $http.post(`/api/getPlanStep/${e.id}`).success(function (data) {
+            $scope.planStep = data.data;
+            $scope.index = layer.open({
+                title: '生产计划进度',
+                type: 1,
+                content: $('#modal-step'),
+                shade: 0,
+                area: '600px',
+                offset: '100px',
+                maxHeight: 500,
+                move: false,
+                resize: false,
+            });
         });
     };
     $scope.closeModal = function () {

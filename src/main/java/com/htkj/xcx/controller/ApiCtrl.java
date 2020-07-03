@@ -329,5 +329,14 @@ public class ApiCtrl {
         count = this.jdbc.update(sql, model.step, model.plan_id);
         return R.success("生产计划状态已更新");
     }
+
+    //后台-管理员查看生产计划进度
+    @RequestMapping("/getPlanStep/{id}")
+    @ResponseBody
+    public Result getPlanStep(@PathVariable int id) {
+        String sql1 = "select t.* from t_plan_step t where t.plan_id=? order by t.systime desc";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
+        return R.success("生产计划进度列表", list);
+    }
     //#endregion
 }

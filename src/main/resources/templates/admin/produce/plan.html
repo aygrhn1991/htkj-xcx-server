@@ -68,19 +68,19 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">产品型号</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" style="text-transform:uppercase;" ng-model="model.model">
+                    <input type="text" class="layui-input" style="text-transform:uppercase;" ng-model="model.model" ng-disabled="model.id!=null">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">产品令号</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" ng-model="model.order">
+                    <input type="text" class="layui-input" ng-model="model.order" ng-disabled="model.id!=null">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">产品批次</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" ng-model="model.batch">
+                    <input type="text" class="layui-input" ng-model="model.batch" ng-disabled="model.id!=null">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -88,7 +88,7 @@
                 <div class="layui-input-block">
                     <div class="layui-row">
                         <div class="layui-col-xs2" ng-repeat="p in line">
-                            <input type="radio" name="line" ng-value="p" ng-model="model.line"><span ng-bind="p"></span>
+                            <input type="radio" name="line" ng-value="p" ng-model="model.line" ng-disabled="model.id!=null"><span ng-bind="p"></span>
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">贴片卡号</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" ng-model="model.card">
+                    <input type="text" class="layui-input" ng-model="model.card" ng-disabled="model.id!=null">
                 </div>
             </div>
             <div class="layui-form-item">

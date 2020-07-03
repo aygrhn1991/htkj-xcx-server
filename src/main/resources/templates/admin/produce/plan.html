@@ -54,6 +54,7 @@
         <td ng-bind="d.mark"></td>
         <td>
             <button class="layui-btn layui-btn-xs" ng-click="showEditModal(d)">修改</button>
+            <!--            <button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==3" ng-click="showEditStepModal(d)">流转</button>-->
             <button class="layui-btn layui-btn-xs" ng-click="showEditStepModal(d)">流转</button>
             <button class="layui-btn layui-btn-xs" ng-click="showStepModal(d)">进度</button>
         </td>
@@ -147,12 +148,12 @@
                 <div class="layui-timeline-content layui-text">
                     <h4 class="layui-timeline-title">
                         <span class="layui-badge layui-bg-green" ng-if="d.step==0">计划未下发</span>
-                        <span class="layui-badge layui-bg-green" ng-if="d.step==1">开票领料</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==1">计划下发&nbsp;&gt;&nbsp;开票领料</span>
                         <span class="layui-badge" ng-if="d.step==10">开票领料(停滞)</span>
-                        <span class="layui-badge layui-bg-green" ng-if="d.step==2">备件备产</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==2">开票领料(完成)&nbsp;&gt;&nbsp;备件备产</span>
                         <span class="layui-badge" ng-if="d.step==20">备件备产(停滞)</span>
-                        <span class="layui-badge layui-bg-green" ng-if="d.step==3">生产准备就绪</span>
-                        <span class="layui-badge layui-bg-green" ng-if="d.step==4">生产进行中</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==3">备件备产(完成)&nbsp;&gt;&nbsp;生产准备就绪</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==4">生产准备就绪(完成)&nbsp;&gt;&nbsp;生产进行中</span>
                         <span ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></span>
                     </h4>
                     <p ng-bind="d.message"></p>

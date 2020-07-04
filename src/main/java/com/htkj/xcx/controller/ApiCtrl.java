@@ -295,7 +295,7 @@ public class ApiCtrl {
             sql1 += and;
             sql2 += and;
         }
-        sql1 += " order by t.start_date desc,t.systime desc limit " + UtilPage.getPage(model);
+        sql1 += " order by t.start_time desc,t.systime desc limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
         return R.success("生产计划列表", count, list);
@@ -305,8 +305,8 @@ public class ApiCtrl {
     @RequestMapping("/addPlan")
     @ResponseBody
     public Result addPlan(@RequestBody Plan model) {
-        String sql = "insert into t_plan(model,`order`,batch,line,card,`count`,start_date,step,mark,del,systime) values(?,?,?,?,?,?,?,?,?,0,now())";
-        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.line, model.card, model.count, model.start_date, PlanStepEnum.unpublish.ordinal(), model.mark);
+        String sql = "insert into t_plan(model,`order`,batch,line,card,`count`,start_time,step,mark,del,systime) values(?,?,?,?,?,?,?,?,?,0,now())";
+        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.line, model.card, model.count, model.start_time, PlanStepEnum.unpublish.ordinal(), model.mark);
         return R.success("生产计划添加成功");
     }
 
@@ -314,8 +314,8 @@ public class ApiCtrl {
     @RequestMapping("/updatePlan")
     @ResponseBody
     public Result updatePlan(@RequestBody Plan model) {
-        String sql = "update t_plan t set t.count=?,t.start_date=?,t.mark=? where t.id=?";
-        int count = this.jdbc.update(sql, model.count, model.start_date, model.mark, model.id);
+        String sql = "update t_plan t set t.count=?,t.start_time=?,t.mark=? where t.id=?";
+        int count = this.jdbc.update(sql, model.count, model.start_time, model.mark, model.id);
         return R.success("生产计划修改成功");
     }
 

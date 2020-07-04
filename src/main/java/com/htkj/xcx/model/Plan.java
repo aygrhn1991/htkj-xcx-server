@@ -8,8 +8,8 @@ public class Plan {
     public String line;
     public String card;
     public int count;
-    public String start_date;
-    public String end_date;
+    public String start_time;
+    public String end_time;
     public int step;
     public String mark;
     public int del;

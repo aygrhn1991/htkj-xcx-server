@@ -1,6 +1,6 @@
 window.Util = {
     //#region 时间日期
-    dateToYYMMDDHHMMSS: function (date) {
+    dateToYYYYMMDDHHMMSS: function (date) {
         var y = date.getFullYear();
         var M = ((date.getMonth() + 1) >= 10 ? '' : '0') + (date.getMonth() + 1);
         var d = (date.getDate() >= 10 ? '' : '0') + date.getDate();

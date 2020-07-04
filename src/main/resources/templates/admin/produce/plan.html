@@ -23,7 +23,7 @@
         <th>生产线</th>
         <th>贴片卡号</th>
         <th>计划数量</th>
-        <th>生产日期</th>
+        <th>生产时间</th>
         <th>计划创建时间</th>
         <th>备注</th>
         <th>
@@ -35,13 +35,13 @@
     <tr ng-repeat="d in data">
         <td ng-bind="d.id"></td>
         <td>
-            <span class="layui-badge layui-bg-green" ng-if="d.step==0">计划未下发</span>
-            <span class="layui-badge layui-bg-green" ng-if="d.step==1">开票领料</span>
-            <span class="layui-badge" ng-if="d.step==10">开票领料(停滞)</span>
-            <span class="layui-badge layui-bg-green" ng-if="d.step==2">备件备产</span>
-            <span class="layui-badge" ng-if="d.step==20">备件备产(停滞)</span>
-            <span class="layui-badge layui-bg-green" ng-if="d.step==3">生产准备就绪</span>
-            <span class="layui-badge layui-bg-green" ng-if="d.step==4">生产进行中</span>
+            <span ng-if="d.step==0">计划未下发</span>
+            <span ng-if="d.step==1">开票领料</span>
+            <span style="color:red;" ng-if="d.step==10">开票领料(停滞)</span>
+            <span ng-if="d.step==2">备件备产</span>
+            <span style="color:red;" ng-if="d.step==20">备件备产(停滞)</span>
+            <span ng-if="d.step==3">生产准备就绪</span>
+            <span ng-if="d.step==4">生产进行中</span>
         </td>
         <td ng-bind="d.model"></td>
         <td ng-bind="d.order"></td>
@@ -49,7 +49,7 @@
         <td ng-bind="d.line"></td>
         <td ng-bind="d.card"></td>
         <td ng-bind="d.count"></td>
-        <td ng-bind="d.start_date"></td>
+        <td ng-bind="d.start_time|date:'yyyy-MM-dd HH:mm:ss'"></td>
         <td ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></td>
         <td ng-bind="d.mark"></td>
         <td>

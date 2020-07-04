@@ -540,9 +540,9 @@ app.controller('planCtrl', function ($scope, $http) {
         $scope.model = window.Util.copyObject($scope.pageModel);
         layui.laydate.render({
             elem: '#date',
-            value: $scope.model.start_date = window.Util.dateToYYYYMMDD(new Date()),
+            value: $scope.model.start_time = window.Util.dateToYYYYMMDDHHMMSS(new Date()),
             done: function (value, date, endDate) {
-                $scope.model.start_date = value;
+                $scope.model.start_time = value;
             }
         });
         $scope.index = layer.open({
@@ -578,9 +578,9 @@ app.controller('planCtrl', function ($scope, $http) {
         $scope.model = e;
         layui.laydate.render({
             elem: '#date',
-            value: e.start_date,
+            value: e.start_time,
             done: function (value, date, endDate) {
-                $scope.model.start_date = value;
+                $scope.model.start_time = value;
             }
         });
         $scope.index = layer.open({
@@ -649,7 +649,7 @@ app.controller('planCtrl', function ($scope, $http) {
                 type: 1,
                 content: $('#modal-step'),
                 shade: 0,
-                area:  ['600px', '500px'],
+                area: ['600px', '500px'],
                 offset: '100px',
                 maxHeight: 500,
                 move: false,
@@ -712,7 +712,7 @@ app.controller('planCtrl', function ($scope, $http) {
         line: null,
         card: null,
         count: null,
-        start_date: null,
+        start_time: null,
         mark: null,
     };
     $scope.reset = function () {

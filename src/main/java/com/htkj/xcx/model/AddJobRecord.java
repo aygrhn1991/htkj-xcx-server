@@ -9,5 +9,6 @@ public class AddJobRecord {
     public int bus;
     public int bus_time;
     public int bus_to;
+    public String bus_to_station;
     public String systime;
 }

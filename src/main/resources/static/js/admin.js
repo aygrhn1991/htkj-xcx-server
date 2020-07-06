@@ -407,6 +407,27 @@ app.controller('adminCtrl', function ($scope, $http) {
     $scope.reset();
 });
 app.controller('addJobRecordCtrl', function ($scope, $http) {
+    $scope.getUser = function () {
+        $http.post('/api/common/getUser').success(function (data) {
+            $scope.user = data.data;
+        });
+    };
+    $scope.meal = [
+        {id: 0, name: '不用餐', select: false},
+        {id: 1, name: '用餐', select: false}
+    ];
+    $scope.mealTime = [
+        {id: 1, name: '午餐', select: false},
+        {id: 2, name: '晚餐', select: false}
+    ];
+    $scope.bus = [
+        {id: 0, name: '不乘车', select: false},
+        {id: 1, name: '乘车', select: false}
+    ];
+    $scope.busTime = [
+        {id: 1, name: '16:30', select: false},
+        {id: 2, name: '19:30', select: false}
+    ];
     $scope.get = function () {
         $scope.search.loading = layer.load();
         $http.post('/api/getAddJobRecordOfDate', $scope.search).success(function (data) {
@@ -443,6 +464,56 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             })
         });
     };
+    $scope.showAddModal = function () {
+        $scope.model = window.Util.copyObject($scope.pageModel);
+        layui.laydate.render({
+            elem: '#date-add',
+            value: $scope.model.date = window.Util.dateToYYYYMMDD(new Date()),
+            done: function (value, date, endDate) {
+                $scope.model.date = value;
+            }
+        });
+        $scope.index = layer.open({
+            title: '添加加班记录',
+            type: 1,
+            content: $('#modal'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.add = function () {
+        console.log($scope.model);
+        if (window.Util.isNull($scope.model.userid)) {
+            layer.msg('请选择一名员工');
+            return;
+        }
+        $scope.model.appIds = [];
+        $scope.appPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    $scope.model.appIds.push(y.id);
+                }
+            })
+        });
+        $scope.model.adminIds = [];
+        $scope.adminPage.forEach(function (x) {
+            x.pages.forEach(function (y) {
+                if (y.select == true) {
+                    $scope.model.adminIds.push(y.id);
+                }
+            })
+        });
+        $http.post('/api/addAdmin', $scope.model).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
     $scope.makePage = function (data) {
         layui.laypage.render({
             elem: 'page',
@@ -460,9 +531,21 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             }
         });
     };
+    $scope.pageModel = {
+        id: null,
+        userid: null,
+        date: null,
+        meal: null,
+        meal_time: null,
+        bus: null,
+        bus_time: null,
+        bus_to: null,
+        bus_to_station: null,
+    };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
         $scope.search.string1 = window.Util.dateToYYYYMMDD(window.Util.addDay(new Date(), 1));
+        $scope.model = window.Util.copyObject($scope.pageModel);
         $http.post('/api/getAddJobRecordAllDate').success(function (data) {
             var dateList = {};
             data.data.forEach(function (x) {
@@ -476,7 +559,8 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
                     $scope.search.string1 = value;
                 }
             });
-        })
+        });
+        $scope.getUser();
         $scope.get();
     };
     $scope.reset();

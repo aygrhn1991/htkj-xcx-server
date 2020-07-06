@@ -284,7 +284,7 @@ public class ApiCtrl {
     //endregion
 
     //#region 生产计划(贴片)
-    //后台-管理员查看生产计划
+    //后台-管理员查看生产计划(贴片)
     @RequestMapping("/getPatchPlan")
     @ResponseBody
     public Result getPatchPlan(@RequestBody Search model) {
@@ -301,7 +301,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)列表", count, list);
     }
 
-    //后台-管理员添加生产计划
+    //后台-管理员添加生产计划(贴片)
     @RequestMapping("/addPatchPlan")
     @ResponseBody
     public Result addPatchPlan(@RequestBody PatchPlan model) {
@@ -310,7 +310,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)添加成功");
     }
 
-    //后台-管理员修改生产计划
+    //后台-管理员修改生产计划(贴片)
     @RequestMapping("/updatePatchPlan")
     @ResponseBody
     public Result updatePatchPlan(@RequestBody PatchPlan model) {
@@ -319,7 +319,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)修改成功");
     }
 
-    //后台-管理员删除生产计划
+    //后台-管理员删除生产计划(贴片)
     @RequestMapping("/deletePatchPlan/{id}")
     @ResponseBody
     public Result deletePatchPlan(@PathVariable int id) {
@@ -328,7 +328,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)已删除");
     }
 
-    //后台-管理员更新生产计划进度
+    //后台-管理员更新生产计划(贴片)进度
     @RequestMapping("/updatePatchPlanStep")
     @ResponseBody
     public Result updatePatchPlanStep(@RequestBody PlanStep model) {
@@ -339,7 +339,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)状态已更新");
     }
 
-    //后台-管理员结转生产计划
+    //后台-管理员结转生产计划(贴片)
     @RequestMapping("/finishPatchPlan")
     @ResponseBody
     public Result finishPatchPlan(@RequestBody PatchPlan model) {
@@ -350,7 +350,7 @@ public class ApiCtrl {
         return R.success("生产计划(贴片)结转完成");
     }
 
-    //后台-管理员查看生产计划进度
+    //后台-管理员查看生产计划(贴片)进度
     @RequestMapping("/getPatchPlanStep/{id}")
     @ResponseBody
     public Result getPatchPlanStep(@PathVariable int id) {

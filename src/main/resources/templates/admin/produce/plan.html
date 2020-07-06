@@ -3,7 +3,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">产品型号</label>
             <div class="layui-input-inline">
-                <input type="text" class="layui-input" ng-model="search.string1">
+                <input type="text" class="layui-input" style="text-transform:uppercase;" ng-model="search.string1">
             </div>
         </div>
         <div class="layui-inline">
@@ -12,55 +12,70 @@
         </div>
     </div>
 </form>
-<table class="layui-table">
-    <thead>
-    <tr>
-        <th>计划ID</th>
-        <th>状态</th>
-        <th>产品型号</th>
-        <th>产品令号</th>
-        <th>产品批次</th>
-        <th>生产线</th>
-        <th>贴片卡号</th>
-        <th>计划数量</th>
-        <th>生产时间</th>
-        <th>计划创建时间</th>
-        <th>备注</th>
-        <th>
-            <button class="layui-btn layui-btn-xs" ng-click="showAddModal()">添加</button>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="d in data">
-        <td ng-bind="d.id"></td>
-        <td>
-            <span ng-if="d.step==0">计划未下发</span>
-            <span ng-if="d.step==1">开票领料</span>
-            <span style="color:red;" ng-if="d.step==10">开票领料(停滞)</span>
-            <span ng-if="d.step==2">备件备产</span>
-            <span style="color:red;" ng-if="d.step==20">备件备产(停滞)</span>
-            <span ng-if="d.step==3">生产准备就绪</span>
-            <span ng-if="d.step==4">生产进行中</span>
-        </td>
-        <td ng-bind="d.model"></td>
-        <td ng-bind="d.order"></td>
-        <td ng-bind="d.batch"></td>
-        <td ng-bind="d.line"></td>
-        <td ng-bind="d.card"></td>
-        <td ng-bind="d.count"></td>
-        <td ng-bind="d.start_time|date:'yyyy-MM-dd HH:mm:ss'"></td>
-        <td ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></td>
-        <td ng-bind="d.mark"></td>
-        <td>
-            <button class="layui-btn layui-btn-xs" ng-click="showEditModal(d)">修改</button>
-            <!--            <button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==3" ng-click="showEditStepModal(d)">流转</button>-->
-            <button class="layui-btn layui-btn-xs" ng-click="showEditStepModal(d)">流转</button>
-            <button class="layui-btn layui-btn-xs" ng-click="showStepModal(d)">进度</button>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="scroll-table">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>计划ID</th>
+            <th>状态</th>
+            <th>产品型号</th>
+            <th>产品令号</th>
+            <th>产品批次</th>
+            <th>生产线</th>
+            <th>贴片卡号</th>
+            <th>计划数量</th>
+            <th>生产时间</th>
+            <th>完成时间</th>
+            <th>加时(h)</th>
+            <th>小时能力(个)</th>
+            <th>结转数量</th>
+            <th>结转信息</th>
+            <th>计划创建时间</th>
+            <th>备注</th>
+            <th>
+                <button class="layui-btn layui-btn-xs" ng-click="showAddModal()">添加</button>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="d in data">
+            <td ng-bind="d.id"></td>
+            <td>
+                <span ng-if="d.step==0">计划未下发</span>
+                <span ng-if="d.step==1">开票领料</span>
+                <span style="color:red;" ng-if="d.step==10">开票领料(停滞)</span>
+                <span ng-if="d.step==2">备件备产</span>
+                <span style="color:red;" ng-if="d.step==20">备件备产(停滞)</span>
+                <span ng-if="d.step==3">生产准备就绪</span>
+                <span ng-if="d.step==4">生产进行中</span>
+                <span ng-if="d.step==5">生产完成</span>
+            </td>
+            <td ng-bind="d.model"></td>
+            <td ng-bind="d.order"></td>
+            <td ng-bind="d.batch"></td>
+            <td ng-bind="d.line"></td>
+            <td ng-bind="d.card"></td>
+            <td ng-bind="d.count_plan"></td>
+            <td ng-bind="d.time_start|date:'yyyy-MM-dd HH:mm:ss'"></td>
+            <td ng-bind="d.time_end|date:'yyyy-MM-dd HH:mm:ss'"></td>
+            <td ng-bind="d.extra_hour"></td>
+            <td ng-bind="d.speed"></td>
+            <td ng-bind="d.count_finish"></td>
+            <td ng-bind="d.mark_finish"></td>
+            <td ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></td>
+            <td ng-bind="d.mark_plan"></td>
+            <td>
+                <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="showEditModal(d)">修改</button>
+                <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="delete(d)">删除</button>
+                <!--<button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==3" ng-click="showEditStepModal(d)">流转</button>-->
+                <button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==1||d.step==10||d.step==2||d.step==20||d.step==3" ng-click="showEditStepModal(d)">流转</button>
+                <button class="layui-btn layui-btn-xs" ng-if="d.step==4" ng-click="showFinishModal(d)">结转</button>
+                <button class="layui-btn layui-btn-xs" ng-click="showStepModal(d)">进度</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <div id="page"></div>
 <div class="modals">
     <div id="modal" class="modal">
@@ -88,7 +103,7 @@
                 <div class="layui-input-block">
                     <div class="layui-row">
                         <div class="layui-col-xs2" ng-repeat="p in line">
-                            <input type="radio" name="line" ng-value="p" ng-model="model.line" ng-disabled="model.id!=null"><span ng-bind="p"></span>
+                            <input type="radio" name="line" ng-value="p" ng-model="model.line"><span ng-bind="p"></span>
                         </div>
                     </div>
                 </div>
@@ -96,25 +111,44 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">贴片卡号</label>
                 <div class="layui-input-block">
-                    <input type="text" class="layui-input" ng-model="model.card" ng-disabled="model.id!=null">
+                    <input type="text" class="layui-input" ng-model="model.card">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">计划数量</label>
-                <div class="layui-input-block">
-                    <input type="number" class="layui-input" ng-model="model.count">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">生产日期</label>
+                <label class="layui-form-label">生产时间</label>
                 <div class="layui-input-block">
                     <input id="date" type="text" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">计划数量</label>
+                <div class="layui-input-block">
+                    <input type="number" class="layui-input" ng-model="model.count_plan">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">加时(h)</label>
+                <div class="layui-input-block">
+                    <input type="number" class="layui-input" ng-model="model.extra_hour">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">小时能力(个)</label>
+                <div class="layui-input-block">
+                    <input type="number" class="layui-input" ng-model="model.speed">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">完成时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" ng-model="model.time_end" disabled>
+                </div>
+                <div class="layui-form-mid layui-word-aux" style="cursor:pointer;" ng-click="calculateEndTime()">点击计算完成时间</div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block">
-                    <textarea class="layui-textarea" ng-model="model.mark"></textarea>
+                    <textarea class="layui-textarea" ng-model="model.mark_plan"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -154,11 +188,39 @@
                         <span class="layui-badge" ng-if="d.step==20">备件备产(停滞)</span>
                         <span class="layui-badge layui-bg-green" ng-if="d.step==3">备件备产(完成)&nbsp;&gt;&nbsp;生产准备就绪</span>
                         <span class="layui-badge layui-bg-green" ng-if="d.step==4">生产准备就绪(完成)&nbsp;&gt;&nbsp;生产进行中</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==5">生产完成</span>
                         <span ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></span>
                     </h4>
                     <p ng-bind="d.message"></p>
                 </div>
             </li>
         </ul>
+    </div>
+    <div id="modal-finish" class="modal">
+        <form>
+            <div class="layui-form-item">
+                <label class="layui-form-label">计划数量</label>
+                <div class="layui-input-block">
+                    <input type="number" class="layui-input" ng-model="model.count_plan" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结转数量</label>
+                <div class="layui-input-block">
+                    <input type="number" class="layui-input" ng-model="model.count_finish">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结转备注</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" ng-model="model.mark_finish"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" ng-click="finish()">保存</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>

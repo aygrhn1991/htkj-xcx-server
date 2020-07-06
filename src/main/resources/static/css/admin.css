@@ -28,3 +28,8 @@ input[type="radio"] {
 .layui-row:after, .layui-row:before {
     display: none;
 }
+
+.scroll-table {
+    width: 100%;
+    overflow-x: auto;
+}

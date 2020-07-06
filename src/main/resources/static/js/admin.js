@@ -530,7 +530,7 @@ app.controller('planCtrl', function ($scope, $http) {
     $scope.line = ['D', 'X', 'P'];
     $scope.get = function () {
         $scope.search.loading = layer.load();
-        $http.post('/api/getPlan', $scope.search).success(function (data) {
+        $http.post('/api/getPatchPlan', $scope.search).success(function (data) {
             layer.close($scope.search.loading);
             $scope.data = data.data;
             $scope.makePage(data);
@@ -540,9 +540,10 @@ app.controller('planCtrl', function ($scope, $http) {
         $scope.model = window.Util.copyObject($scope.pageModel);
         layui.laydate.render({
             elem: '#date',
-            value: $scope.model.start_time = window.Util.dateToYYYYMMDDHHMMSS(new Date()),
+            type: 'datetime',
+            value: $scope.model.time_start = window.Util.dateToYYYYMMDDHHMMSS(new Date()),
             done: function (value, date, endDate) {
-                $scope.model.start_time = value;
+                $scope.model.time_start = value;
             }
         });
         $scope.index = layer.open({
@@ -556,17 +557,34 @@ app.controller('planCtrl', function ($scope, $http) {
             resize: false,
         });
     };
+    $scope.calculateEndTime = function () {
+        if (window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
+            window.Util.isNull($scope.model.extra_hour) ||
+            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
+            layer.msg('数据错误，无法计算');
+            return;
+        }
+        var timestamp = window.Util.stringToDate($scope.model.time_start).getTime();
+        timestamp += $scope.model.extra_hour * 3600 * 1000;
+        timestamp += $scope.model.count_plan / $scope.model.speed * 3600 * 1000;
+        $scope.model.time_end = window.Util.dateToYYYYMMDDHHMMSS(new Date(timestamp));
+    };
     $scope.add = function () {
+        $scope.calculateEndTime();
         if (window.Util.isNull($scope.model.model) ||
             window.Util.isNull($scope.model.order) ||
             window.Util.isNull($scope.model.batch) ||
             window.Util.isNull($scope.model.line) ||
             window.Util.isNull($scope.model.card) ||
-            window.Util.isNull($scope.model.count) || $scope.model.count == 0) {
+            window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
+            window.Util.isNull($scope.model.time_start) ||
+            window.Util.isNull($scope.model.time_end) ||
+            window.Util.isNull($scope.model.extra_hour) ||
+            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
             layer.msg('请完善生产计划信息');
             return;
         }
-        $http.post('/api/addPlan', $scope.model).success(function (data) {
+        $http.post('/api/addPatchPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -575,12 +593,15 @@ app.controller('planCtrl', function ($scope, $http) {
         });
     };
     $scope.showEditModal = function (e) {
+        e.time_start = window.Util.dateToYYYYMMDDHHMMSS(new Date(e.time_start));
+        e.time_end = window.Util.dateToYYYYMMDDHHMMSS(new Date(e.time_end));
         $scope.model = e;
         layui.laydate.render({
             elem: '#date',
-            value: e.start_time,
+            type: 'datetime',
+            value: e.time_start,
             done: function (value, date, endDate) {
-                $scope.model.start_time = value;
+                $scope.model.time_start = value;
             }
         });
         $scope.index = layer.open({
@@ -595,11 +616,18 @@ app.controller('planCtrl', function ($scope, $http) {
         });
     };
     $scope.edit = function () {
-        if (window.Util.isNull($scope.model.count) || $scope.model.count == 0) {
+        $scope.calculateEndTime();
+        if (window.Util.isNull($scope.model.line) ||
+            window.Util.isNull($scope.model.card) ||
+            window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
+            window.Util.isNull($scope.model.time_start) ||
+            window.Util.isNull($scope.model.time_end) ||
+            window.Util.isNull($scope.model.extra_hour) ||
+            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
             layer.msg('请完善生产计划信息');
             return;
         }
-        $http.post('/api/updatePlan', $scope.model).success(function (data) {
+        $http.post('/api/updatePatchPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -633,7 +661,35 @@ app.controller('planCtrl', function ($scope, $http) {
         } else {
             $scope.stepModel.step = null;
         }
-        $http.post('/api/updatePlanStep', $scope.stepModel).success(function (data) {
+        $http.post('/api/updatePatchPlanStep', $scope.stepModel).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
+    $scope.showFinishModal = function (e) {
+        $scope.model = e;
+        $scope.index = layer.open({
+            title: '生产计划结转',
+            type: 1,
+            content: $('#modal-finish'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.finish = function () {
+        if (window.Util.isNull($scope.model.count_finish) ||
+            $scope.model.count_finish == 0 ||
+            $scope.model.count_finish > $scope.model.count_plan) {
+            layer.msg('请完善生产计划结转信息');
+            return;
+        }
+        $http.post('/api/finishPatchPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -642,7 +698,7 @@ app.controller('planCtrl', function ($scope, $http) {
         });
     };
     $scope.showStepModal = function (e) {
-        $http.post(`/api/getPlanStep/${e.id}`).success(function (data) {
+        $http.post(`/api/getPatchPlanStep/${e.id}`).success(function (data) {
             $scope.planStep = data.data;
             $scope.index = layer.open({
                 title: '生产计划进度',
@@ -661,29 +717,12 @@ app.controller('planCtrl', function ($scope, $http) {
         layer.close($scope.index);
     };
     $scope.delete = function (e) {
-        layer.confirm('此操作将删除管理员账号', null, function () {
-            $http.post(`/api/deleteAdmin/${e.userid}`).success(function (data) {
+        layer.confirm('此操作将删除生产计划', null, function () {
+            $http.post(`/api/deletePatchPlan/${e.id}`).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();
                 }
-            });
-        });
-    };
-    $scope.editState = function (e, state) {
-        layer.confirm('此操作将更改管理员账号状态', null, function () {
-            $http.post(`/api/updateAdminState/${e.userid}/${state}`).success(function (data) {
-                layer.msg(data.message);
-                if (data.success) {
-                    $scope.get();
-                }
-            });
-        });
-    };
-    $scope.resetPassword = function (e) {
-        layer.confirm('此操作将重置管理员登录密码', null, function () {
-            $http.post(`/api/updateAdminPassword/1/${e.userid}/123456/-1`).success(function (data) {
-                layer.msg(data.message);
             });
         });
     };
@@ -711,9 +750,15 @@ app.controller('planCtrl', function ($scope, $http) {
         batch: null,
         line: null,
         card: null,
-        count: null,
-        start_time: null,
-        mark: null,
+        count_plan: null,
+        count_finish: null,
+        time_start: null,
+        time_end: null,
+        extra_hour: null,
+        speed: null,
+        step: null,
+        mark_plan: null,
+        mark_finish: null,
     };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();

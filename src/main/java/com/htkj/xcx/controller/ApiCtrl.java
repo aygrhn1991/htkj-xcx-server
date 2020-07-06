@@ -1,7 +1,7 @@
 package com.htkj.xcx.controller;
 
 import com.htkj.xcx.model.*;
-import com.htkj.xcx.model.em.PlanStepEnum;
+import com.htkj.xcx.model.em.PatchPlanStepEnum;
 import com.htkj.xcx.model.em.UserStateEnum;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
@@ -283,60 +283,80 @@ public class ApiCtrl {
     }
     //endregion
 
-    //#region
+    //#region 生产计划(贴片)
     //后台-管理员查看生产计划
-    @RequestMapping("/getPlan")
+    @RequestMapping("/getPatchPlan")
     @ResponseBody
-    public Result getPlan(@RequestBody Search model) {
-        String sql1 = "select t.* from t_plan t where t.del=0";
-        String sql2 = "select count(*) from t_plan t where t.del=0";
+    public Result getPatchPlan(@RequestBody Search model) {
+        String sql1 = "select t.* from t_plan_patch t where t.del=0";
+        String sql2 = "select count(*) from t_plan_patch t where t.del=0";
         if (!(model.string1 == null || model.string1.isEmpty())) {
             String and = " and t.model like '%" + model.string1.toUpperCase() + "%' ";
             sql1 += and;
             sql2 += and;
         }
-        sql1 += " order by t.start_time desc,t.systime desc limit " + UtilPage.getPage(model);
+        sql1 += " order by t.time_start desc,t.time_end desc limit " + UtilPage.getPage(model);
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
         int count = this.jdbc.queryForObject(sql2, Integer.class);
-        return R.success("生产计划列表", count, list);
+        return R.success("生产计划(贴片)列表", count, list);
     }
 
     //后台-管理员添加生产计划
-    @RequestMapping("/addPlan")
+    @RequestMapping("/addPatchPlan")
     @ResponseBody
-    public Result addPlan(@RequestBody Plan model) {
-        String sql = "insert into t_plan(model,`order`,batch,line,card,`count`,start_time,step,mark,del,systime) values(?,?,?,?,?,?,?,?,?,0,now())";
-        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.line, model.card, model.count, model.start_time, PlanStepEnum.unpublish.ordinal(), model.mark);
-        return R.success("生产计划添加成功");
+    public Result addPatchPlan(@RequestBody PatchPlan model) {
+        String sql = "insert into t_plan_patch(model,`order`,batch,line,card,count_plan,time_start,time_end,extra_hour,speed,step,mark_plan,del,systime) values(?,?,?,?,?,?,?,?,?,?,?,?,0,now())";
+        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.line, model.card, model.count_plan, model.time_start, model.time_end, model.extra_hour, model.speed, PatchPlanStepEnum.unpublish.ordinal(), model.mark_plan);
+        return R.success("生产计划(贴片)添加成功");
     }
 
     //后台-管理员修改生产计划
-    @RequestMapping("/updatePlan")
+    @RequestMapping("/updatePatchPlan")
     @ResponseBody
-    public Result updatePlan(@RequestBody Plan model) {
-        String sql = "update t_plan t set t.count=?,t.start_time=?,t.mark=? where t.id=?";
-        int count = this.jdbc.update(sql, model.count, model.start_time, model.mark, model.id);
-        return R.success("生产计划修改成功");
+    public Result updatePatchPlan(@RequestBody PatchPlan model) {
+        String sql = "update t_plan_patch t set t.line=?,t.card=?,t.count_plan=?,t.time_start=?,t.time_end=?,t.extra_hour=?,t.speed=?,t.mark_plan=? where t.id=?";
+        int count = this.jdbc.update(sql, model.line, model.card, model.count_plan, model.time_start, model.time_end, model.extra_hour, model.speed, model.mark_plan, model.id);
+        return R.success("生产计划(贴片)修改成功");
+    }
+
+    //后台-管理员删除生产计划
+    @RequestMapping("/deletePatchPlan/{id}")
+    @ResponseBody
+    public Result deletePatchPlan(@PathVariable int id) {
+        String sql = "update t_plan_patch t set t.del=1 where t.id=?";
+        int count = this.jdbc.update(sql, id);
+        return R.success("生产计划(贴片)已删除");
     }
 
     //后台-管理员更新生产计划进度
-    @RequestMapping("/updatePlanStep")
+    @RequestMapping("/updatePatchPlanStep")
     @ResponseBody
-    public Result updatePlanStep(@RequestBody PlanStep model) {
-        String sql = "insert into t_plan_step(plan_id,step,message,systime) values(?,?,?,now())";
+    public Result updatePatchPlanStep(@RequestBody PlanStep model) {
+        String sql = "insert into t_plan_patch_step(plan_id,step,message,systime) values(?,?,?,now())";
         int count = this.jdbc.update(sql, model.plan_id, model.step, model.message);
-        sql = "update t_plan t set t.step=? where t.id=?";
+        sql = "update t_plan_patch t set t.step=? where t.id=?";
         count = this.jdbc.update(sql, model.step, model.plan_id);
-        return R.success("生产计划状态已更新");
+        return R.success("生产计划(贴片)状态已更新");
+    }
+
+    //后台-管理员结转生产计划
+    @RequestMapping("/finishPatchPlan")
+    @ResponseBody
+    public Result finishPatchPlan(@RequestBody PatchPlan model) {
+        String sql = "insert into t_plan_patch_step(plan_id,step,message,systime) values(?,?,?,now())";
+        int count = this.jdbc.update(sql, model.id, PatchPlanStepEnum.finsih.ordinal(), model.mark_finish);
+        sql = "update t_plan_patch t set t.count_finish=?,t.step=?,t.mark_finish=? where t.id=?";
+        count = this.jdbc.update(sql, model.count_finish, PatchPlanStepEnum.finsih.ordinal(), model.mark_finish, model.id);
+        return R.success("生产计划(贴片)结转完成");
     }
 
     //后台-管理员查看生产计划进度
-    @RequestMapping("/getPlanStep/{id}")
+    @RequestMapping("/getPatchPlanStep/{id}")
     @ResponseBody
-    public Result getPlanStep(@PathVariable int id) {
-        String sql1 = "select t.* from t_plan_step t where t.plan_id=? order by t.systime desc";
+    public Result getPatchPlanStep(@PathVariable int id) {
+        String sql1 = "select t.* from t_plan_patch_step t where t.plan_id=? order by t.systime desc";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
-        return R.success("生产计划进度列表", list);
+        return R.success("生产计划(贴片)进度列表", list);
     }
     //#endregion
 }

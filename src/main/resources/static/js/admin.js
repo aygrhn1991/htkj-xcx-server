@@ -258,7 +258,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         $scope.model.appIds = [];
         $scope.appPage.forEach(function (x) {
             x.pages.forEach(function (y) {
-                if (y.select == true) {
+                if (y.select) {
                     $scope.model.appIds.push(y.id);
                 }
             })
@@ -266,7 +266,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         $scope.model.adminIds = [];
         $scope.adminPage.forEach(function (x) {
             x.pages.forEach(function (y) {
-                if (y.select == true) {
+                if (y.select) {
                     $scope.model.adminIds.push(y.id);
                 }
             })
@@ -321,7 +321,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         $scope.model.appIds = [];
         $scope.appPage.forEach(function (x) {
             x.pages.forEach(function (y) {
-                if (y.select == true) {
+                if (y.select) {
                     $scope.model.appIds.push(y.id);
                 }
             })
@@ -329,7 +329,7 @@ app.controller('adminCtrl', function ($scope, $http) {
         $scope.model.adminIds = [];
         $scope.adminPage.forEach(function (x) {
             x.pages.forEach(function (y) {
-                if (y.select == true) {
+                if (y.select) {
                     $scope.model.adminIds.push(y.id);
                 }
             })
@@ -413,20 +413,20 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         });
     };
     $scope.meal = [
-        {id: 0, name: '不用餐', select: false},
-        {id: 1, name: '用餐', select: false}
+        {id: 0, name: '不用餐'},
+        {id: 1, name: '用餐'}
     ];
     $scope.mealTime = [
         {id: 1, name: '午餐', select: false},
-        {id: 2, name: '晚餐', select: false}
+        {id: 2, name: '晚餐', select: true}
     ];
     $scope.bus = [
-        {id: 0, name: '不乘车', select: false},
-        {id: 1, name: '乘车', select: false}
+        {id: 0, name: '不乘车'},
+        {id: 1, name: '乘车'}
     ];
     $scope.busTime = [
-        {id: 1, name: '16:30', select: false},
-        {id: 2, name: '19:30', select: false}
+        {id: 1, name: '16:30'},
+        {id: 2, name: '19:30'}
     ];
     $scope.get = function () {
         $scope.search.loading = layer.load();
@@ -485,34 +485,50 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         });
     };
     $scope.add = function () {
-        console.log($scope.model);
         if (window.Util.isNull($scope.model.userid)) {
-            layer.msg('请选择一名员工');
+            layer.msg('请完善加班信息1');
             return;
         }
-        $scope.model.appIds = [];
-        $scope.appPage.forEach(function (x) {
-            x.pages.forEach(function (y) {
-                if (y.select == true) {
-                    $scope.model.appIds.push(y.id);
-                }
-            })
-        });
-        $scope.model.adminIds = [];
-        $scope.adminPage.forEach(function (x) {
-            x.pages.forEach(function (y) {
-                if (y.select == true) {
-                    $scope.model.adminIds.push(y.id);
-                }
-            })
-        });
-        $http.post('/api/addAdmin', $scope.model).success(function (data) {
+        if ($scope.model.meal == 1 && $scope.mealTime.filter(function (x) {
+            return x.select == true;
+        }).length == 0) {
+            layer.msg('请完善加班信息2');
+            return;
+        }
+        if ($scope.model.bus_to && window.Util.isNull($scope.model.bus_to_station)) {
+            layer.msg('请完善加班信息3');
+            return;
+        }
+        if ($scope.model.meal == 1) {
+            if ($scope.mealTime.filter(function (x) {
+                return x.select == true;
+            }).length == 2) {
+                $scope.model.meal_time = 3;
+            } else {
+                $scope.mealTime.forEach(function (x) {
+                    if (x.select) {
+                        $scope.model.meal_time = x.id;
+                    }
+                })
+            }
+        } else {
+            $scope.model.meal_time = 0;
+        }
+        var data = window.Util.copyObject($scope.model);
+        data.meal_time = $scope.model.meal == 1 ? $scope.model.meal_time : 0;
+        data.bus_time = $scope.model.bus == 1 ? $scope.model.bus_time : 0;
+        data.bus_to = $scope.model.bus_to ? 1 : 0;
+        data.bus_to_station = $scope.model.bus_to ? $scope.model.bus_to_station : null;
+        $http.post('/api/addJob', data).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
                 $scope.closeModal();
             }
         });
+    };
+    $scope.closeModal = function () {
+        layer.close($scope.index);
     };
     $scope.makePage = function (data) {
         layui.laypage.render({
@@ -535,11 +551,11 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
         id: null,
         userid: null,
         date: null,
-        meal: null,
+        meal: 1,
         meal_time: null,
-        bus: null,
-        bus_time: null,
-        bus_to: null,
+        bus: 1,
+        bus_time: 2,
+        bus_to: false,
         bus_to_station: null,
     };
     $scope.reset = function () {

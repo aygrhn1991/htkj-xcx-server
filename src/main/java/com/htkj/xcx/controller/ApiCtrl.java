@@ -213,6 +213,7 @@ public class ApiCtrl {
 
     //region 加班
     //小程序-员工申报加班
+    //后台-管理员添加加班
     @RequestMapping("/addJob")
     public Result addJob(@RequestBody AddJobRecord model) {
         String sql = "select count(*) from t_add_job_record t where t.userid=? and date_format(t.date,'%Y-%m-%d')=?";
@@ -220,8 +221,8 @@ public class ApiCtrl {
         if (count >= 1) {
             return R.error("当天已申报加班");
         }
-        sql = "insert into t_add_job_record(userid,`date`,meal,meal_time,bus,bus_time,bus_to,systime) values(?,?,?,?,?,?,?,now())";
-        count = this.jdbc.update(sql, model.userid, model.date, model.meal, model.meal_time, model.bus, model.bus_time, model.bus_to);
+        sql = "insert into t_add_job_record(userid,`date`,meal,meal_time,bus,bus_time,bus_to,bus_to_station,systime) values(?,?,?,?,?,?,?,?,now())";
+        count = this.jdbc.update(sql, model.userid, model.date, model.meal, model.meal_time, model.bus, model.bus_time, model.bus_to, model.bus_to_station);
         return R.success("申报加班成功");
     }
 

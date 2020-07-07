@@ -55,7 +55,7 @@
             <span ng-if="d.meal==1"><span ng-bind="d.meal_time==1?'午餐':d.meal_time==2?'晚餐':'午餐,晚餐'"></span></span>
         </td>
         <td>
-            <span ng-if="d.bus_to==1">08:00</span>
+            <span ng-if="d.bus_to==1">08:00(<span ng-bind="d.bus_to_station"></span>)</span>
         </td>
         <td>
             <span ng-if="d.bus==1"><span ng-bind="d.bus_time==1?'16:30':'19:30'"></span></span>
@@ -96,7 +96,7 @@
                 <div class="layui-input-block">
                     <div class="layui-row">
                         <div class="layui-col-xs2" ng-repeat="d in mealTime">
-                            <input type="checkbox" name="mealTime" ng-checked="d.select"><span ng-bind="d.name"></span>
+                            <input type="checkbox" name="mealTime" ng-model="d.select"><span ng-bind="d.name"></span>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            <div class="layui-form-item" ng-if="model.bus_to==true">
+            <div class="layui-form-item" ng-if="model.bus_to">
                 <label class="layui-form-label">乘车站点</label>
                 <div class="layui-input-block">
                     <input type="text" class="layui-input" ng-model="model.bus_to_station">

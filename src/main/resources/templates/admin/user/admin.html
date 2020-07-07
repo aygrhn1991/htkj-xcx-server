@@ -72,7 +72,7 @@
                 <div class="layui-input-block">
                     <div class="layui-row" ng-repeat="d in appPage">
                         <div class="layui-col-xs12"><strong ng-bind="d.name"></strong></div>
-                        <div class="layui-col-xs3 layui-col-xs-offset1" ng-repeat="p in d.pages">
+                        <div class="layui-col-xs4 layui-col-xs-offset1" ng-repeat="p in d.pages">
                             <input type="checkbox" ng-model="p.select"><span ng-bind="p.name"></span>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                 <div class="layui-input-block">
                     <div class="layui-row" ng-repeat="d in adminPage">
                         <div class="layui-col-xs12"><strong ng-bind="d.name"></strong></div>
-                        <div class="layui-col-xs3 layui-col-xs-offset1" ng-repeat="p in d.pages">
+                        <div class="layui-col-xs4 layui-col-xs-offset1" ng-repeat="p in d.pages">
                             <input type="checkbox" ng-model="p.select"><span ng-bind="p.name"></span>
                         </div>
                     </div>

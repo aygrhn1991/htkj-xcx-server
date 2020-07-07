@@ -36,7 +36,7 @@ public class ApiCommonCtrl {
     @RequestMapping("/getUser")
     @ResponseBody
     public Result getUser() {
-        String sql = String.format("select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.department_id,t.name,t.id");
+        String sql = String.format("select t.*,t1.name department_name from t_user t left join t_department t1 on t.department_id=t1.id order by t.department_id,convert(t.name using gb2312),t.id");
         List<Map<String, Object>> list = this.jdbc.queryForList(sql);
         return R.success("员工列表", list);
     }

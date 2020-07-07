@@ -118,14 +118,14 @@ public class AdminCtrl {
         return "admin/addjob/addjobstatistic";
     }
 
-    @RequestMapping("/produce/planpatch")
-    public String planpatch() {
-        return "admin/produce/planpatch";
+    @RequestMapping("/produce/patchplan")
+    public String patchplan() {
+        return "admin/produce/patchplan";
     }
 
-    @RequestMapping("/produce/planboard")
-    public String planboard() {
-        return "admin/produce/planboard";
+    @RequestMapping("/produce/boardplan")
+    public String boardplan() {
+        return "admin/produce/boardplan";
     }
     //endregion
 

@@ -17,13 +17,13 @@ app.config(function ($routeProvider) {
             templateUrl: '/admin/addjob/addjobstatistic',
             controller: 'addJobStatisticCtrl'
         })
-        .when('/produce/planpatch', {
-            templateUrl: '/admin/produce/planpatch',
-            controller: 'planPatchCtrl'
+        .when('/produce/patchplan', {
+            templateUrl: '/admin/produce/patchplan',
+            controller: 'patchPlanCtrl'
         })
-        .when('/produce/planboard', {
-            templateUrl: '/admin/produce/planboard',
-            controller: 'planBoardCtrl'
+        .when('/produce/boardplan', {
+            templateUrl: '/admin/produce/boardplan',
+            controller: 'boardPlanCtrl'
         })
         .when('/welcome', {
             templateUrl: '/admin/welcome'
@@ -630,7 +630,7 @@ app.controller('addJobStatisticCtrl', function ($scope, $http) {
     };
     $scope.reset();
 });
-app.controller('planPatchCtrl', function ($scope, $http) {
+app.controller('patchPlanCtrl', function ($scope, $http) {
     $scope.line = ['D', 'X', 'P'];
     $scope.get = function () {
         $scope.search.loading = layer.load();
@@ -871,7 +871,7 @@ app.controller('planPatchCtrl', function ($scope, $http) {
     };
     $scope.reset();
 });
-app.controller('planBoardCtrl', function ($scope, $http) {
+app.controller('boardPlanCtrl', function ($scope, $http) {
     $scope.line = ['D', 'X', 'P'];
     $scope.get = function () {
         $scope.search.loading = layer.load();

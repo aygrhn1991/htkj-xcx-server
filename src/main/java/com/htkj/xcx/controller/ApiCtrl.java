@@ -1,8 +1,7 @@
 package com.htkj.xcx.controller;
 
 import com.htkj.xcx.model.*;
-import com.htkj.xcx.model.em.PatchPlanStepEnum;
-import com.htkj.xcx.model.em.UserStateEnum;
+import com.htkj.xcx.model.em.*;
 import com.htkj.xcx.suit.request.Search;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
@@ -359,5 +358,82 @@ public class ApiCtrl {
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
         return R.success("生产计划(贴片)进度列表", list);
     }
+    //#endregion
+
+    //#region 生产计划(制板)
+    //后台-管理员查看生产计划(制板)
+    @RequestMapping("/getBoardPlan")
+    @ResponseBody
+    public Result getBoardPlan(@RequestBody Search model) {
+        String sql1 = "select t.* from t_plan_board t where t.del=0";
+        String sql2 = "select count(*) from t_plan_board t where t.del=0";
+        if (!(model.string1 == null || model.string1.isEmpty())) {
+            String and = " and t.model like '%" + model.string1.toUpperCase() + "%' ";
+            sql1 += and;
+            sql2 += and;
+        }
+        sql1 += " order by t.time_start desc,t.time_end desc limit " + UtilPage.getPage(model);
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1);
+        int count = this.jdbc.queryForObject(sql2, Integer.class);
+        return R.success("生产计划(制板)列表", count, list);
+    }
+
+    //后台-管理员添加生产计划(制板)
+    @RequestMapping("/addBoardPlan")
+    @ResponseBody
+    public Result addBoardPlan(@RequestBody BoardPlan model) {
+        String sql = "insert into t_plan_board(model,`order`,batch,plan_id,team,count_plan,time_start,step,mark_plan,del,systime) values(?,?,?,?,?,?,?,?,?,0,now())";
+        int count = this.jdbc.update(sql, model.model.toUpperCase(), model.order, model.batch, model.plan_id, model.team, model.count_plan, model.time_start, BoardPlanStepEnum.unpublish.ordinal(), model.mark_plan);
+        return R.success("生产计划(制板)添加成功");
+    }
+
+    //后台-管理员修改生产计划(制板)
+    @RequestMapping("/updateBoardPlan")
+    @ResponseBody
+    public Result updateBoardPlan(@RequestBody BoardPlan model) {
+        String sql = "update t_plan_board t set t.team=?,t.count_plan=?,t.time_start=?,t.mark_plan=? where t.id=?";
+        int count = this.jdbc.update(sql, model.team, model.count_plan, model.time_start, model.mark_plan, model.id);
+        return R.success("生产计划(制板)修改成功");
+    }
+
+    //后台-管理员删除生产计划(制板)
+    @RequestMapping("/deleteBoardPlan/{id}")
+    @ResponseBody
+    public Result deleteBoardPlan(@PathVariable int id) {
+        String sql = "update t_plan_board t set t.del=1 where t.id=?";
+        int count = this.jdbc.update(sql, id);
+        return R.success("生产计划(制板)已删除");
+    }
+
+//    //后台-管理员更新生产计划(制板)进度
+//    @RequestMapping("/updateBoardPlanStep")
+//    @ResponseBody
+//    public Result updateBoardPlanStep(@RequestBody PlanStep model) {
+//        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
+//        int count = this.jdbc.update(sql, model.plan_id, model.step, model.message);
+//        sql = "update t_plan_board t set t.step=? where t.id=?";
+//        count = this.jdbc.update(sql, model.step, model.plan_id);
+//        return R.success("生产计划(制板)状态已更新");
+//    }
+//
+//    //后台-管理员结转生产计划(制板)
+//    @RequestMapping("/finishBoardPlan")
+//    @ResponseBody
+//    public Result finishBoardPlan(@RequestBody BoardPlan model) {
+//        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
+//        int count = this.jdbc.update(sql, model.id, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish);
+//        sql = "update t_plan_board t set t.count_finish=?,t.step=?,t.mark_finish=? where t.id=?";
+//        count = this.jdbc.update(sql, model.count_finish, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish, model.id);
+//        return R.success("生产计划(制板)结转完成");
+//    }
+//
+//    //后台-管理员查看生产计划(制板)进度
+//    @RequestMapping("/getBoardPlanStep/{id}")
+//    @ResponseBody
+//    public Result getBoardPlanStep(@PathVariable int id) {
+//        String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
+//        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
+//        return R.success("生产计划(制板)进度列表", list);
+//    }
     //#endregion
 }

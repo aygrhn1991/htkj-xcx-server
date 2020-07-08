@@ -82,12 +82,9 @@
             };
             $scope.pageModel = {
                 userid: null,
-                password: null,
-                state: null,
-                systime: null
+                password: null
             };
             $scope.reset = function () {
-                $scope.loading = null;
                 $scope.model = window.Util.copyObject($scope.pageModel);
             };
             $scope.reset();

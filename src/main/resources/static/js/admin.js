@@ -872,10 +872,23 @@ app.controller('patchPlanCtrl', function ($scope, $http) {
     $scope.reset();
 });
 app.controller('boardPlanCtrl', function ($scope, $http) {
-    $scope.line = ['D', 'X', 'P'];
+    $scope.team = [
+        {id: 1, name: '1班', select: false},
+        {id: 2, name: '2班', select: false},
+        {id: 3, name: '3班', select: false},
+    ];
+    $scope.addTypeOption = [
+        {id: 1, name: '贴片结转'},
+        {id: 2, name: '无结转'},
+    ];
+    $scope.getPatchPlan = function () {
+        $http.post('/api/common/getPatchPlan').success(function (data) {
+            $scope.patchPlan = data.data;
+        });
+    };
     $scope.get = function () {
         $scope.search.loading = layer.load();
-        $http.post('/api/getPatchPlan', $scope.search).success(function (data) {
+        $http.post('/api/getBoardPlan', $scope.search).success(function (data) {
             layer.close($scope.search.loading);
             $scope.data = data.data;
             $scope.makePage(data);
@@ -1090,17 +1103,16 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
     };
     $scope.pageModel = {
         id: null,
+        type: 1,
+        plan_id: null,
         model: null,
         order: null,
         batch: null,
-        line: null,
-        card: null,
+        team: null,
         count_plan: null,
         count_finish: null,
         time_start: null,
         time_end: null,
-        extra_hour: null,
-        speed: null,
         step: null,
         mark_plan: null,
         mark_finish: null,
@@ -1108,6 +1120,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
         $scope.model = window.Util.copyObject($scope.pageModel);
+        $scope.getPatchPlan();
         $scope.get();
     };
     $scope.reset();

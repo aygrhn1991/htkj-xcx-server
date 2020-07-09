@@ -54,4 +54,12 @@ public class ApiCommonCtrl {
         return R.success("所有页面", map);
     }
 
+    @RequestMapping("/getPatchPlan")
+    @ResponseBody
+    public Result getPatchPlan() {
+        String sql = String.format("select t.* from t_plan_patch t where t.del=0 order by t.model,t.id desc");
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
+        return R.success("所有贴片计划", list);
+    }
+
 }

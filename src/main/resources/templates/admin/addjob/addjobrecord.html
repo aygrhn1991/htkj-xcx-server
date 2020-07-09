@@ -85,7 +85,7 @@
                 <label class="layui-form-label">用餐</label>
                 <div class="layui-input-block">
                     <div class="layui-row">
-                        <div class="layui-col-xs2" ng-repeat="d in meal">
+                        <div class="layui-col-xs3" ng-repeat="d in meal">
                             <input type="radio" name="meal" ng-value="d.id" ng-model="model.meal"><span ng-bind="d.name"></span>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                 <label class="layui-form-label"></label>
                 <div class="layui-input-block">
                     <div class="layui-row">
-                        <div class="layui-col-xs2" ng-repeat="d in mealTime">
+                        <div class="layui-col-xs3" ng-repeat="d in mealTime">
                             <input type="checkbox" name="mealTime" ng-model="d.select"><span ng-bind="d.name"></span>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                 <label class="layui-form-label">早车</label>
                 <div class="layui-input-block">
                     <div class="layui-row">
-                        <div class="layui-col-xs2">
+                        <div class="layui-col-xs3">
                             <input type="checkbox" name="bus_to" ng-model="model.bus_to">早车
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                 <label class="layui-form-label">晚车</label>
                 <div class="layui-input-block">
                     <div class="layui-row">
-                        <div class="layui-col-xs2" ng-repeat="d in bus">
+                        <div class="layui-col-xs3" ng-repeat="d in bus">
                             <input type="radio" name="bus" ng-value="d.id" ng-model="model.bus"><span ng-bind="d.name"></span>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                 <label class="layui-form-label"></label>
                 <div class="layui-input-block">
                     <div class="layui-row">
-                        <div class="layui-col-xs2" ng-repeat="d in busTime">
+                        <div class="layui-col-xs3" ng-repeat="d in busTime">
                             <input type="radio" name="busTime" ng-value="d.id" ng-model="model.bus_time"><span ng-bind="d.name"></span>
                         </div>
                     </div>

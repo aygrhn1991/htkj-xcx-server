@@ -1,6 +1,6 @@
 package com.htkj.xcx.model;
 
-public class PlanRecord {
+public class BoardPlanRecord {
     public int id;
     public int plan_id;
     public int team;

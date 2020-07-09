@@ -490,17 +490,17 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
     };
     $scope.add = function () {
         if (window.Util.isNull($scope.model.userid)) {
-            layer.msg('请完善加班信息1');
+            layer.msg('请完善加班信息');
             return;
         }
         if ($scope.model.meal == 1 && $scope.mealTime.filter(function (x) {
             return x.select == true;
         }).length == 0) {
-            layer.msg('请完善加班信息2');
+            layer.msg('请完善加班信息');
             return;
         }
         if ($scope.model.bus_to && window.Util.isNull($scope.model.bus_to_station)) {
-            layer.msg('请完善加班信息3');
+            layer.msg('请完善加班信息');
             return;
         }
         if ($scope.model.meal == 1) {
@@ -915,34 +915,39 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             resize: false,
         });
     };
-    $scope.calculateEndTime = function () {
-        if (window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
-            window.Util.isNull($scope.model.extra_hour) ||
-            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
-            layer.msg('数据错误，无法计算');
+    $scope.$watch('model.plan_id', function () {
+        if ($scope.model.type == 1 && !window.Util.isNull($scope.model.plan_id)) {
+            console.log($scope.patchPlan);
+            $scope.patchPlan.forEach(function (x) {
+                if (x.id == $scope.model.plan_id) {
+                    $scope.model.model = x.model;
+                    $scope.model.order = x.order;
+                    $scope.model.batch = x.batch;
+                }
+            })
+        }
+    });
+    $scope.add = function () {
+        if ($scope.model.type == 1 && window.Util.isNull($scope.model.plan_id)) {
+            layer.msg('请完善生产计划信息1');
             return;
         }
-        var timestamp = window.Util.stringToDate($scope.model.time_start).getTime();
-        timestamp += $scope.model.extra_hour * 3600 * 1000;
-        timestamp += $scope.model.count_plan / $scope.model.speed * 3600 * 1000;
-        $scope.model.time_end = window.Util.dateToYYYYMMDDHHMMSS(new Date(timestamp));
-    };
-    $scope.add = function () {
-        $scope.calculateEndTime();
+        if ($scope.team.filter(function (x) {
+            return x.select == true;
+        }).length == 0) {
+            layer.msg('请完善生产计划信息2');
+            return;
+        }
         if (window.Util.isNull($scope.model.model) ||
             window.Util.isNull($scope.model.order) ||
             window.Util.isNull($scope.model.batch) ||
-            window.Util.isNull($scope.model.line) ||
-            window.Util.isNull($scope.model.card) ||
             window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
-            window.Util.isNull($scope.model.time_start) ||
-            window.Util.isNull($scope.model.time_end) ||
-            window.Util.isNull($scope.model.extra_hour) ||
-            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
-            layer.msg('请完善生产计划信息');
+            window.Util.isNull($scope.model.time_start)) {
+            layer.msg('请完善生产计划信息3');
             return;
         }
-        $http.post('/api/addPatchPlan', $scope.model).success(function (data) {
+        //处理上传数据
+        $http.post('/api/addBoardPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();

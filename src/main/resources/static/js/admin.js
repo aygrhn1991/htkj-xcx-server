@@ -898,8 +898,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         $scope.model = window.Util.copyObject($scope.pageModel);
         layui.laydate.render({
             elem: '#date',
-            type: 'datetime',
-            value: $scope.model.time_start = window.Util.dateToYYYYMMDDHHMMSS(new Date()),
+            value: $scope.model.time_start = window.Util.dateToYYYYMMDD(new Date()),
             done: function (value, date, endDate) {
                 $scope.model.time_start = value;
             }
@@ -961,7 +960,6 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         $scope.model = e;
         layui.laydate.render({
             elem: '#date',
-            type: 'datetime',
             value: e.time_start,
             done: function (value, date, endDate) {
                 $scope.model.time_start = value;

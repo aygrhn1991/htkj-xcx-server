@@ -405,35 +405,35 @@ public class ApiCtrl {
         return R.success("生产计划(制板)已删除");
     }
 
-//    //后台-管理员更新生产计划(制板)进度
-//    @RequestMapping("/updateBoardPlanStep")
-//    @ResponseBody
-//    public Result updateBoardPlanStep(@RequestBody PlanStep model) {
-//        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
-//        int count = this.jdbc.update(sql, model.plan_id, model.step, model.message);
-//        sql = "update t_plan_board t set t.step=? where t.id=?";
-//        count = this.jdbc.update(sql, model.step, model.plan_id);
-//        return R.success("生产计划(制板)状态已更新");
-//    }
-//
-//    //后台-管理员结转生产计划(制板)
-//    @RequestMapping("/finishBoardPlan")
-//    @ResponseBody
-//    public Result finishBoardPlan(@RequestBody BoardPlan model) {
-//        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
-//        int count = this.jdbc.update(sql, model.id, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish);
-//        sql = "update t_plan_board t set t.count_finish=?,t.step=?,t.mark_finish=? where t.id=?";
-//        count = this.jdbc.update(sql, model.count_finish, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish, model.id);
-//        return R.success("生产计划(制板)结转完成");
-//    }
-//
-//    //后台-管理员查看生产计划(制板)进度
-//    @RequestMapping("/getBoardPlanStep/{id}")
-//    @ResponseBody
-//    public Result getBoardPlanStep(@PathVariable int id) {
-//        String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
-//        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
-//        return R.success("生产计划(制板)进度列表", list);
-//    }
+    //后台-管理员更新生产计划(制板)进度
+    @RequestMapping("/updateBoardPlanStep")
+    @ResponseBody
+    public Result updateBoardPlanStep(@RequestBody PlanStep model) {
+        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
+        int count = this.jdbc.update(sql, model.plan_id, model.step, model.message);
+        sql = "update t_plan_board t set t.step=? where t.id=?";
+        count = this.jdbc.update(sql, model.step, model.plan_id);
+        return R.success("生产计划(制板)状态已更新");
+    }
+
+    //后台-管理员结转生产计划(制板)
+    @RequestMapping("/finishBoardPlan")
+    @ResponseBody
+    public Result finishBoardPlan(@RequestBody BoardPlan model) {
+        String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
+        int count = this.jdbc.update(sql, model.id, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish);
+        sql = "update t_plan_board t set t.count_finish=?,t.step=?,t.mark_finish=? where t.id=?";
+        count = this.jdbc.update(sql, model.count_finish, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish, model.id);
+        return R.success("生产计划(制板)结转完成");
+    }
+
+    //后台-管理员查看生产计划(制板)进度
+    @RequestMapping("/getBoardPlanStep/{id}")
+    @ResponseBody
+    public Result getBoardPlanStep(@PathVariable int id) {
+        String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
+        return R.success("生产计划(制板)进度列表", list);
+    }
     //#endregion
 }

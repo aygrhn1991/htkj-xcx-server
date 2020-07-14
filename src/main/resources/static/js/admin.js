@@ -916,7 +916,6 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
     };
     $scope.$watch('model.plan_id', function () {
         if ($scope.model.type == 1 && !window.Util.isNull($scope.model.plan_id)) {
-            console.log($scope.patchPlan);
             $scope.patchPlan.forEach(function (x) {
                 if (x.id == $scope.model.plan_id) {
                     $scope.model.model = x.model;
@@ -928,13 +927,13 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
     });
     $scope.add = function () {
         if ($scope.model.type == 1 && window.Util.isNull($scope.model.plan_id)) {
-            layer.msg('请完善生产计划信息1');
+            layer.msg('请完善生产计划信息');
             return;
         }
         if ($scope.team.filter(function (x) {
             return x.select == true;
         }).length == 0) {
-            layer.msg('请完善生产计划信息2');
+            layer.msg('请完善生产计划信息');
             return;
         }
         if (window.Util.isNull($scope.model.model) ||
@@ -942,10 +941,19 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             window.Util.isNull($scope.model.batch) ||
             window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
             window.Util.isNull($scope.model.time_start)) {
-            layer.msg('请完善生产计划信息3');
+            layer.msg('请完善生产计划信息');
             return;
         }
-        //处理上传数据
+        var team = '';
+        if ($scope.model.type == 2) {
+            $scope.model.plan_id = null;
+        }
+        $scope.team.forEach(function (x) {
+            if (x.select) {
+                team += x.id.toString();
+            }
+        })
+        $scope.model.team = team;
         $http.post('/api/addBoardPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
@@ -955,9 +963,18 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         });
     };
     $scope.showEditModal = function (e) {
-        e.time_start = window.Util.dateToYYYYMMDDHHMMSS(new Date(e.time_start));
-        e.time_end = window.Util.dateToYYYYMMDDHHMMSS(new Date(e.time_end));
         $scope.model = e;
+        $scope.model.type = e.plan_id == 0 ? 2 : 1;
+        $scope.teamSelectList = e.team.toString().split('');
+        $scope.team.forEach(function (x) {
+            if ($scope.teamSelectList.filter(function (y) {
+                return y == x.id.toString();
+            }).length != 0) {
+                x.select = true;
+            } else {
+                x.select = false;
+            }
+        })
         layui.laydate.render({
             elem: '#date',
             value: e.time_start,
@@ -977,18 +994,28 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         });
     };
     $scope.edit = function () {
-        $scope.calculateEndTime();
-        if (window.Util.isNull($scope.model.line) ||
-            window.Util.isNull($scope.model.card) ||
-            window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
-            window.Util.isNull($scope.model.time_start) ||
-            window.Util.isNull($scope.model.time_end) ||
-            window.Util.isNull($scope.model.extra_hour) ||
-            window.Util.isNull($scope.model.speed) || $scope.model.speed == 0) {
+        if ($scope.team.filter(function (x) {
+            return x.select == true;
+        }).length == 0) {
             layer.msg('请完善生产计划信息');
             return;
         }
-        $http.post('/api/updatePatchPlan', $scope.model).success(function (data) {
+        if (window.Util.isNull($scope.model.count_plan) || $scope.model.count_plan == 0 ||
+            window.Util.isNull($scope.model.time_start)) {
+            layer.msg('请完善生产计划信息');
+            return;
+        }
+        var team = '';
+        if ($scope.model.type == 2) {
+            $scope.model.plan_id = null;
+        }
+        $scope.team.forEach(function (x) {
+            if (x.select) {
+                team += x.id.toString();
+            }
+        })
+        $scope.model.team = team;
+        $http.post('/api/updateBoardPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -1015,14 +1042,12 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             $scope.stepModel.step = 1;
         } else if ($scope.model.step == 1 || $scope.model.step == 10) {
             $scope.stepModel.step = next ? 2 : 10;
-        } else if ($scope.model.step == 2 || $scope.model.step == 20) {
-            $scope.stepModel.step = next ? 3 : 20;
-        } else if ($scope.model.step == 3) {
-            $scope.stepModel.step = 4;
+        } else if ($scope.model.step == 2) {
+            $scope.stepModel.step = 3;
         } else {
             $scope.stepModel.step = null;
         }
-        $http.post('/api/updatePatchPlanStep', $scope.stepModel).success(function (data) {
+        $http.post('/api/updateBoardPlanStep', $scope.stepModel).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -1050,7 +1075,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             layer.msg('请完善生产计划结转信息');
             return;
         }
-        $http.post('/api/finishPatchPlan', $scope.model).success(function (data) {
+        $http.post('/api/finishBoardPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {
                 $scope.get();
@@ -1059,7 +1084,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         });
     };
     $scope.showStepModal = function (e) {
-        $http.post(`/api/getPatchPlanStep/${e.id}`).success(function (data) {
+        $http.post(`/api/getBoardPlanStep/${e.id}`).success(function (data) {
             $scope.planStep = data.data;
             $scope.index = layer.open({
                 title: '生产计划进度',
@@ -1079,7 +1104,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
     };
     $scope.delete = function (e) {
         layer.confirm('此操作将删除生产计划', null, function () {
-            $http.post(`/api/deletePatchPlan/${e.id}`).success(function (data) {
+            $http.post(`/api/deleteBoardPlan/${e.id}`).success(function (data) {
                 layer.msg(data.message);
                 if (data.success) {
                     $scope.get();

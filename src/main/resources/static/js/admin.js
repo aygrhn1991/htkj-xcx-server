@@ -1055,7 +1055,45 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             }
         });
     };
+    $scope.showEditRecordModal = function (e) {
+        $scope.model = e;
+        $scope.recordModel = {plan_id: e.id, team: null, count_good: null, count_bad: null, date: null, message: null};
+        layui.laydate.render({
+            elem: '#date-record',
+            value: $scope.recordModel.date = window.Util.dateToYYYYMMDD(new Date()),
+            done: function (value, date, endDate) {
+                $scope.recordModel.date = value;
+            }
+        });
+        $scope.index = layer.open({
+            title: '生产计划进度更新日结算',
+            type: 1,
+            content: $('#modal-record-edit'),
+            shade: 0,
+            area: '600px',
+            maxHeight: 500,
+            move: false,
+            resize: false,
+        });
+    };
+    $scope.editRecord = function () {
+        if (window.Util.isNull($scope.recordModel.team) ||
+            window.Util.isNull($scope.recordModel.count_good) ||
+            window.Util.isNull($scope.recordModel.count_bad) ||
+            window.Util.isNull($scope.recordModel.date)) {
+            layer.msg('请完善日结算信息');
+            return;
+        }
+        $http.post('/api/updateBoardPlanRecord', $scope.recordModel).success(function (data) {
+            layer.msg(data.message);
+            if (data.success) {
+                $scope.get();
+                $scope.closeModal();
+            }
+        });
+    };
     $scope.showFinishModal = function (e) {
+        e.count_finish = e.count_good + e.count_bad;
         $scope.model = e;
         $scope.index = layer.open({
             title: '生产计划结转',
@@ -1069,12 +1107,6 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         });
     };
     $scope.finish = function () {
-        if (window.Util.isNull($scope.model.count_finish) ||
-            $scope.model.count_finish == 0 ||
-            $scope.model.count_finish > $scope.model.count_plan) {
-            layer.msg('请完善生产计划结转信息');
-            return;
-        }
         $http.post('/api/finishBoardPlan', $scope.model).success(function (data) {
             layer.msg(data.message);
             if (data.success) {

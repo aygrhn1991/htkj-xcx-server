@@ -365,7 +365,7 @@ public class ApiCtrl {
     @RequestMapping("/getBoardPlan")
     @ResponseBody
     public Result getBoardPlan(@RequestBody Search model) {
-        String sql1 = "select t.* from t_plan_board t where t.del=0";
+        String sql1 = "select t.*,(select coalesce(sum(tt.count_good),0) from t_plan_board_record tt where tt.plan_id=t.id) count_good,(select coalesce(sum(tt.count_bad),0) from t_plan_board_record tt where tt.plan_id=t.id) count_bad from t_plan_board t where t.del=0";
         String sql2 = "select count(*) from t_plan_board t where t.del=0";
         if (!(model.string1 == null || model.string1.isEmpty())) {
             String and = " and t.model like '%" + model.string1.toUpperCase() + "%' ";
@@ -416,13 +416,22 @@ public class ApiCtrl {
         return R.success("生产计划(制板)状态已更新");
     }
 
+    //后台-管理员更新生产计划(制板)日结算
+    @RequestMapping("/updateBoardPlanRecord")
+    @ResponseBody
+    public Result updateBoardPlanRecord(@RequestBody BoardPlanRecord model) {
+        String sql = "insert into t_plan_board_record(plan_id,team,count_good,count_bad,date,message,systime) values(?,?,?,?,?,?,now())";
+        int count = this.jdbc.update(sql, model.plan_id, model.team, model.count_good, model.count_bad, model.date, model.message);
+        return R.success("生产计划(制板)日结算已更新");
+    }
+
     //后台-管理员结转生产计划(制板)
     @RequestMapping("/finishBoardPlan")
     @ResponseBody
     public Result finishBoardPlan(@RequestBody BoardPlan model) {
         String sql = "insert into t_plan_board_step(plan_id,step,message,systime) values(?,?,?,now())";
         int count = this.jdbc.update(sql, model.id, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish);
-        sql = "update t_plan_board t set t.count_finish=?,t.step=?,t.mark_finish=? where t.id=?";
+        sql = "update t_plan_board t set t.count_finish=?,t.step=?,time_end=now(),t.mark_finish=? where t.id=?";
         count = this.jdbc.update(sql, model.count_finish, BoardPlanStepEnum.finsih.ordinal(), model.mark_finish, model.id);
         return R.success("生产计划(制板)结转完成");
     }

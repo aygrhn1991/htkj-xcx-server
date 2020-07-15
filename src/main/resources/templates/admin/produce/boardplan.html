@@ -97,6 +97,15 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">数量</label>
+                <div class="layui-input-block">
+                    计划(<span ng-bind="selectPatchPlan.count_plan"></span>)，
+                    实际完成(<span ng-bind="selectPatchPlan.count_finish"></span>)，
+                    已流转生产(<span ng-bind="selectPatchPlan.count_doing"></span>)，
+                    剩余(<span ng-bind="selectPatchPlan.count_finish-selectPatchPlan.count_doing"></span>)
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">产品型号</label>
                 <div class="layui-input-block">
                     <input type="text" class="layui-input" style="text-transform:uppercase;" ng-model="model.model" ng-disabled="model.id!=null||model.type==1">

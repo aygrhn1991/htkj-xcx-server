@@ -921,6 +921,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
                     $scope.model.model = x.model;
                     $scope.model.order = x.order;
                     $scope.model.batch = x.batch;
+                    $scope.selectPatchPlan = x;
                 }
             })
         }

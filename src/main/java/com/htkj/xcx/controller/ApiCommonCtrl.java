@@ -1,5 +1,6 @@
 package com.htkj.xcx.controller;
 
+import com.htkj.xcx.model.em.PatchPlanStepEnum;
 import com.htkj.xcx.suit.response.R;
 import com.htkj.xcx.suit.response.Result;
 import org.slf4j.Logger;
@@ -57,9 +58,9 @@ public class ApiCommonCtrl {
     @RequestMapping("/getPatchPlan")
     @ResponseBody
     public Result getPatchPlan() {
-        String sql = String.format("select t.* from t_plan_patch t where t.del=0 order by t.model,t.id desc");
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql);
-        return R.success("所有贴片计划", list);
+        String sql = String.format("select t.*,(select coalesce(sum(tt.count_plan),0) from t_plan_board tt where tt.plan_id=t.id) count_doing from t_plan_patch t where t.del=0 and t.step=? order by t.model,t.id desc");
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, PatchPlanStepEnum.finsih.ordinal());
+        return R.success("已完成贴片计划", list);
     }
 
 }

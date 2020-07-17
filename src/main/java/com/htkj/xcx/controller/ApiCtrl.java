@@ -458,7 +458,7 @@ public class ApiCtrl {
     @RequestMapping("/getBoardPlanRecord/{id}")
     @ResponseBody
     public Result getBoardPlanRecord(@PathVariable int id) {
-        String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
+        String sql1 = "select sum(case team when 1 then count_good else 0 end) team1,sum(case team when 2 then count_good else 0 end) team2,sum(case team when 3 then count_good else 0 end) team3,date from t_plan_board_record t where t.plan_id=? group by t.date order by t.date";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
         return R.success("生产计划(制板)日结算列表", list);
     }

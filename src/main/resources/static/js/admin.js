@@ -1132,6 +1132,21 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
             });
         })
     };
+    $scope.showRecordModal = function (e) {
+        $http.post(`/api/getBoardPlanRecord/${e.id}`).success(function (data) {
+            $scope.planRecord = data.data;
+            $scope.index = layer.open({
+                title: '生产计划结算表',
+                type: 1,
+                content: $('#modal-record'),
+                shade: 0,
+                area: '600px',
+                maxHeight: 500,
+                move: false,
+                resize: false,
+            });
+        })
+    };
     $scope.closeModal = function () {
         layer.close($scope.index);
     };

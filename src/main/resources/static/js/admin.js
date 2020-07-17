@@ -882,7 +882,7 @@ app.controller('boardPlanCtrl', function ($scope, $http) {
         {id: 2, name: '无结转'},
     ];
     $scope.getPatchPlan = function () {
-        $http.post('/api/common/getPatchPlan').success(function (data) {
+        $http.post('/api/getPatchPlanForBoardPlan').success(function (data) {
             $scope.patchPlan = data.data;
         });
     };

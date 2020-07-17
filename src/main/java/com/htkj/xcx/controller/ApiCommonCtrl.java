@@ -55,12 +55,5 @@ public class ApiCommonCtrl {
         return R.success("所有页面", map);
     }
 
-    @RequestMapping("/getPatchPlan")
-    @ResponseBody
-    public Result getPatchPlan() {
-        String sql = String.format("select t.*,(select coalesce(sum(tt.count_plan),0) from t_plan_board tt where tt.plan_id=t.id) count_doing from t_plan_patch t where t.del=0 and t.step=? order by t.model,t.id desc");
-        List<Map<String, Object>> list = this.jdbc.queryForList(sql, PatchPlanStepEnum.finsih.ordinal());
-        return R.success("已完成贴片计划", list);
-    }
 
 }

@@ -66,10 +66,10 @@
             <td>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="showEditModal(d)">修改</button>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="delete(d)">删除</button>
-                <!--<button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==3" ng-click="showEditStepModal(d)">流转</button>-->
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==1||d.step==10||d.step==2" ng-click="showEditStepModal(d)">流转</button>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==3" ng-click="showEditRecordModal(d)">日结算</button>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==3" ng-click="showFinishModal(d)">结转</button>
+                <button class="layui-btn layui-btn-xs" ng-if="d.step==3||d.step==4" ng-click="showRecordModal(d)">结算表</button>
                 <button class="layui-btn layui-btn-xs" ng-click="showStepModal(d)">进度</button>
             </td>
         </tr>
@@ -96,7 +96,7 @@
                     <select class="layui-input" ng-options="x.id as x.model+' , '+x.order+' , '+x.batch for x in patchPlan" ng-model="model.plan_id" ng-disabled="model.id!=null"></select>
                 </div>
             </div>
-            <div class="layui-form-item">
+            <div class="layui-form-item" ng-if="model.type==1">
                 <label class="layui-form-label">数量</label>
                 <div class="layui-input-block">
                     计划(<span ng-bind="selectPatchPlan.count_plan"></span>)，
@@ -240,6 +240,25 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div id="modal-record" class="modal">
+        <ul class="layui-timeline">
+            <li class="layui-timeline-item" ng-repeat="d in planStep">
+                <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                <div class="layui-timeline-content layui-text">
+                    <h4 class="layui-timeline-title">
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==0">计划未下发</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==1">计划下发&nbsp;&gt;&nbsp;开票领料</span>
+                        <span class="layui-badge" ng-if="d.step==10">开票领料(停滞)</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==2">开票领料(完成)&nbsp;&gt;&nbsp;生产准备就绪</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==3">生产准备就绪(完成)&nbsp;&gt;&nbsp;生产进行中</span>
+                        <span class="layui-badge layui-bg-green" ng-if="d.step==4">生产完成</span>
+                        <span ng-bind="d.systime|date:'yyyy-MM-dd HH:mm:ss'"></span>
+                    </h4>
+                    <p ng-bind="d.message"></p>
+                </div>
+            </li>
+        </ul>
     </div>
     <div id="modal-finish" class="modal">
         <form>

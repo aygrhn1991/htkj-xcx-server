@@ -378,6 +378,15 @@ public class ApiCtrl {
         return R.success("生产计划(制板)列表", count, list);
     }
 
+    //后台-管理员添加生产计划(制板)时，结转贴片计划列表
+    @RequestMapping("/getPatchPlanForBoardPlan")
+    @ResponseBody
+    public Result getPatchPlanForBoardPlan() {
+        String sql = String.format("select t.*,(select coalesce(sum(tt.count_plan),0) from t_plan_board tt where tt.plan_id=t.id) count_doing from t_plan_patch t where t.del=0 and t.step=? order by t.model,t.id desc");
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql, PatchPlanStepEnum.finsih.ordinal());
+        return R.success("已完成贴片计划(用于添加制板计划)", list);
+    }
+
     //后台-管理员添加生产计划(制板)
     @RequestMapping("/addBoardPlan")
     @ResponseBody
@@ -443,6 +452,15 @@ public class ApiCtrl {
         String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
         List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
         return R.success("生产计划(制板)进度列表", list);
+    }
+
+    //后台-管理员查看生产计划(制板)日结算
+    @RequestMapping("/getBoardPlanRecord/{id}")
+    @ResponseBody
+    public Result getBoardPlanRecord(@PathVariable int id) {
+        String sql1 = "select t.* from t_plan_board_step t where t.plan_id=? order by t.systime desc";
+        List<Map<String, Object>> list = this.jdbc.queryForList(sql1, id);
+        return R.success("生产计划(制板)日结算列表", list);
     }
     //#endregion
 }

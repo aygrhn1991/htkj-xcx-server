@@ -67,7 +67,6 @@
             <td>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="showEditModal(d)">修改</button>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0" ng-click="delete(d)">删除</button>
-                <!--<button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==3" ng-click="showEditStepModal(d)">流转</button>-->
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==0||d.step==1||d.step==10||d.step==2||d.step==20||d.step==3" ng-click="showEditStepModal(d)">流转</button>
                 <button class="layui-btn layui-btn-xs" ng-if="d.step==4" ng-click="showFinishModal(d)">结转</button>
                 <button class="layui-btn layui-btn-xs" ng-click="showStepModal(d)">进度</button>

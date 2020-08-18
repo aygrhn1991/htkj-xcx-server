@@ -564,7 +564,7 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
     };
     $scope.reset = function () {
         $scope.search = window.Util.getSearchObject();
-        $scope.search.string1 = window.Util.dateToYYYYMMDD(window.Util.addDay(new Date(), 1));
+        $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date());
         $scope.model = window.Util.copyObject($scope.pageModel);
         $http.post('/api/getAddJobRecordAllDate').success(function (data) {
             var dateList = {};

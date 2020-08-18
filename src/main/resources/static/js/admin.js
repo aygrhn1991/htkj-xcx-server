@@ -573,7 +573,7 @@ app.controller('addJobRecordCtrl', function ($scope, $http) {
             })
             layui.laydate.render({
                 elem: '#date',
-                value: $scope.search.string1 = window.Util.dateToYYYYMMDD(window.Util.addDay(new Date(), 1)),
+                value: $scope.search.string1 = window.Util.dateToYYYYMMDD(new Date()),
                 mark: dateList,
                 done: function (value, date, endDate) {
                     $scope.search.string1 = value;
